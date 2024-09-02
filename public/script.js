@@ -6,7 +6,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     nightModeBtn.addEventListener('click', () => {
         document.body.classList.toggle('night-mode');
         nightModeBtn.textContent = document.body.classList.contains('night-mode') ? '☀️' : '🌙';
+        // 保存夜间模式状态到 localStorage
+        localStorage.setItem('nightMode', document.body.classList.contains('night-mode'));
     });
+
+    // 检查并应用保存的夜间模式状态
+    const savedNightMode = localStorage.getItem('nightMode');
+    if (savedNightMode === 'true') {
+        document.body.classList.add('night-mode');
+        nightModeBtn.textContent = '☀️';
+    }
 
     try {
         const response = await fetch('https://path-momo-api.gusibi.workers.dev/api/blog-posts');
@@ -35,9 +44,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             contentHtml += `<p>${post.body}</p>`;
 
             // 创建标签 HTML
-            const labelsHtml = post.labels.map(label =>
+            const labelsHtml = post.labels && post.labels.length > 0 ? post.labels.map(label =>
                 `<span class="label" style="background-color: #${label.color}">${label.name}</span>`
-            ).join('');
+            ).join('') : '';
 
             card.innerHTML = `
                 <div class="header">

@@ -33,6 +33,13 @@ nav {
     align-items: center;
 }
 
+.night-mode-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
 .icons span {
     margin: 0 10px;
     cursor: pointer;
