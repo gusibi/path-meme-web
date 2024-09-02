@@ -1,20 +1,20 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Script started');
     const timeline = document.querySelector('.timeline');
-    timeline.innerHTML = '<p>Loading...</p>';
+    const nightModeBtn = document.querySelector('.night-mode-btn');
+
+    // Night mode toggle
+    nightModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('night-mode');
+        nightModeBtn.textContent = document.body.classList.contains('night-mode') ? '☀️' : '🌙';
+    });
 
     try {
         const response = await fetch('https://path-momo-api.gusibi.workers.dev/api/blog-posts');
-        console.log('API response:', response);
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const blogPosts = await response.json();
-        console.log('Blog posts:', blogPosts);
-
-        timeline.innerHTML = '';
 
         if (blogPosts.length === 0) {
             timeline.innerHTML = '<p>No blog posts found.</p>';
@@ -24,14 +24,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         blogPosts.forEach(post => {
             const card = document.createElement('div');
             card.className = 'card';
+
+            // 检查是否包含 #meme 标签
+            const isMeme = post.labels && post.labels.some(label => label.name.toLowerCase() === '#meme');
+
+            let contentHtml = '';
+            if (!isMeme) {
+                contentHtml += `<h2>${post.title}</h2>`;
+            }
+            contentHtml += `<p>${post.body}</p>`;
+
             card.innerHTML = `
                 <div class="header">
                     <img src="avatar.png" alt="User Avatar">
                     <span>Morning</span>
                 </div>
                 <div class="content">
-                    <h2>${post.title}</h2>
-                    <p>${post.body}</p>
+                    ${contentHtml}
                 </div>
                 <div class="time">${new Date(post.created_at).toLocaleTimeString()}</div>
             `;
