@@ -8,7 +8,7 @@ export default {
         const url = new URL(request.url);
 
         if (url.pathname === '/api/blog-posts') {
-            return await handleBlogPosts(request, env);
+            return await handleBlogPosts(request);
         } else {
             return new Response('Not Found', { status: 404 });
         }
@@ -18,7 +18,7 @@ export default {
 function handleCORS() {
     return new Response(null, {
         headers: {
-            "Access-Control-Allow-Origin": "https://momo.gusibi.mobi",
+            "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type",
         },
@@ -29,7 +29,7 @@ async function handleBlogPosts(request, env) {
     const GITHUB_TOKEN = env.GITHUB_TOKEN; // 替换为你的 GitHub 个人访问令牌
 
     try {
-        const response = await fetch('https://api.github.com/repos/gusibi/path-meme-db/issues', {
+        const response = await fetch('https://api.github.com/repos/{owner}/{repo}/issues', {
             headers: {
                 'Authorization': `token ${GITHUB_TOKEN}`,
                 'Accept': 'application/vnd.github.v3+json',
@@ -49,7 +49,8 @@ async function handleBlogPosts(request, env) {
         const blogPosts = issues.map(issue => ({
             title: issue.title,
             body: issue.body,
-            created_at: issue.created_at
+            created_at: issue.created_at,
+            labels: issue.labels // 添加标签信息
         }));
 
         return new Response(JSON.stringify(blogPosts), {
@@ -65,7 +66,7 @@ async function handleBlogPosts(request, env) {
 
 function corsHeaders() {
     return {
-        "Access-Control-Allow-Origin": "https://momo.gusibi.mobi",
+        "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json"
     };
 }

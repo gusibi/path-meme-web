@@ -25,14 +25,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             const card = document.createElement('div');
             card.className = 'card';
 
-            // 检查是否包含 #meme 标签
-            const isMeme = post.labels && post.labels.some(label => label.name.toLowerCase() === '#meme');
+            // 检查是否包含 meme 标签
+            const isMeme = post.labels && post.labels.some(label => label.name.toLowerCase() === 'meme');
 
             let contentHtml = '';
             if (!isMeme) {
                 contentHtml += `<h2>${post.title}</h2>`;
             }
             contentHtml += `<p>${post.body}</p>`;
+
+            // 创建标签 HTML
+            const labelsHtml = post.labels.map(label =>
+                `<span class="label" style="background-color: #${label.color}">${label.name}</span>`
+            ).join('');
 
             card.innerHTML = `
                 <div class="header">
@@ -42,7 +47,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="content">
                     ${contentHtml}
                 </div>
-                <div class="time">${new Date(post.created_at).toLocaleTimeString()}</div>
+                <div class="footer">
+                    <span class="time">${new Date(post.created_at).toLocaleTimeString()}</span>
+                    <div class="labels">${labelsHtml}</div>
+                </div>
             `;
             timeline.appendChild(card);
         });
