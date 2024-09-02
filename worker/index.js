@@ -1,25 +1,47 @@
 export default {
     async fetch(request, env, ctx) {
-        return await handleRequest(request);
+        // 处理 CORS 预检请求
+        if (request.method === "OPTIONS") {
+            return handleCORS();
+        }
+
+        const url = new URL(request.url);
+
+        if (url.pathname === '/api/blog-posts') {
+            return await handleBlogPosts(request, env);
+        } else {
+            return new Response('Not Found', { status: 404 });
+        }
     }
 };
 
-async function handleRequest(request) {
-    const GITHUB_TOKEN = ''; // 替换为你的 GitHub 个人访问令牌
+function handleCORS() {
+    return new Response(null, {
+        headers: {
+            "Access-Control-Allow-Origin": "https://momo.gusibi.mobi",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        },
+    });
+}
+
+async function handleBlogPosts(request, env) {
+    const GITHUB_TOKEN = env.GITHUB_TOKEN; // 替换为你的 GitHub 个人访问令牌
 
     try {
         const response = await fetch('https://api.github.com/repos/gusibi/path-meme-db/issues', {
             headers: {
                 'Authorization': `token ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json'
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'Cloudflare Worker'
             }
         });
 
-        // 检查响应是否成功
         if (!response.ok) {
-            return new Response(`GitHub API request failed with status ${response.status}`, {
+            const errorText = await response.text();
+            return new Response(`GitHub API request failed with status ${response.status}: ${errorText}`, {
                 status: response.status,
-                headers: { 'content-type': 'text/plain' }
+                headers: corsHeaders()
             });
         }
 
@@ -31,12 +53,19 @@ async function handleRequest(request) {
         }));
 
         return new Response(JSON.stringify(blogPosts), {
-            headers: { 'content-type': 'application/json' }
+            headers: corsHeaders()
         });
     } catch (error) {
         return new Response(`Error: ${error.message}`, {
             status: 500,
-            headers: { 'content-type': 'text/plain' }
+            headers: corsHeaders()
         });
     }
+}
+
+function corsHeaders() {
+    return {
+        "Access-Control-Allow-Origin": "https://momo.gusibi.mobi",
+        "Content-Type": "application/json"
+    };
 }
