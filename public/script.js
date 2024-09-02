@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const response = await fetch('/api/blog-posts')
-    const blogPosts = await response.json()
-    const timeline = document.querySelector('.timeline')
+    const response = await fetch('https://path-momo-api.gusibi.workers.dev/momos');
+    const blogPosts = await response.json();
+    const timeline = document.querySelector('.timeline');
 
     blogPosts.forEach(post => {
-        const card = document.createElement('div')
-        card.className = 'card'
+        const card = document.createElement('div');
+        card.className = 'card';
         card.innerHTML = `
             <div class="header">
                 <img src="avatar.png" alt="User Avatar">
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <p>${post.body}</p>
             </div>
             <div class="time">${new Date(post.created_at).toLocaleTimeString()}</div>
-        `
-        timeline.appendChild(card)
-    })
-})
+        `;
+        timeline.appendChild(card);
+    });
+});
