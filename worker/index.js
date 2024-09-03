@@ -27,9 +27,11 @@ function handleCORS() {
 
 async function handleBlogPosts(request, env) {
     const GITHUB_TOKEN = env.GITHUB_TOKEN; // 替换为你的 GitHub 个人访问令牌
+    const owner = env.GITHUB_OWNER;
+    const repo = env.GITHUB_REPO;
 
     try {
-        const response = await fetch('https://api.github.com/repos/{owner}/{repo}/issues', {
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
             headers: {
                 'Authorization': `token ${GITHUB_TOKEN}`,
                 'Accept': 'application/vnd.github.v3+json',
