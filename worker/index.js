@@ -8,7 +8,7 @@ export default {
         const url = new URL(request.url);
 
         if (url.pathname === '/api/blog-posts') {
-            return await handleBlogPosts(request);
+            return await handleBlogPosts(request, env);
         } else {
             return new Response('Not Found', { status: 404 });
         }
@@ -29,7 +29,7 @@ async function handleBlogPosts(request, env) {
     const GITHUB_TOKEN = env.GITHUB_TOKEN; // 替换为你的 GitHub 个人访问令牌
     const owner = env.GITHUB_OWNER;
     const repo = env.GITHUB_REPO;
-
+    console.log(GITHUB_TOKEN, owner, repo)
     try {
         const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues`, {
             headers: {

@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.className = 'card';
 
             const date = new Date(post.created_at);
-            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 
             let titleHtml = '';
             if (post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')) {
@@ -50,13 +50,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             ).join('');
 
             card.innerHTML = `
-                <div class="card-date">${formattedDate}</div>
-                <a href="${post.html_url}" class="github-link" target="_blank">GitHub</a>
                 ${titleHtml}
                 <div class="card-content">${marked(post.body)}</div>
                 <div class="card-footer">
-                    <div class="card-labels">${labelsHtml}</div>
-                    <div class="card-reactions">${reactionsHtml}</div>
+                    <div>
+                        <span class="card-time">${formattedTime}</span>
+                        <div class="card-reactions">${reactionsHtml}</div>
+                    </div>
+                    <div>
+                        <div class="card-labels">${labelsHtml}</div>
+                        <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
+                    </div>
                 </div>
             `;
 
