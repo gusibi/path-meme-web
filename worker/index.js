@@ -49,10 +49,13 @@ async function handleBlogPosts(request, env) {
 
         const issues = await response.json();
         const blogPosts = issues.map(issue => ({
+            number: issue.number,
             title: issue.title,
             body: issue.body,
             created_at: issue.created_at,
-            labels: issue.labels // 添加标签信息
+            labels: issue.labels,
+            reactions: issue.reactions,
+            html_url: issue.html_url
         }));
 
         return new Response(JSON.stringify(blogPosts), {

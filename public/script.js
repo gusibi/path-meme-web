@@ -38,11 +38,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let titleHtml = '';
             if (post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')) {
-                titleHtml = `<h2 class="card-title" onclick="location.href='/blog/${post.number}'">${post.title}</h2>`;
+                titleHtml = `<h2 class="card-title" onclick="window.open('/blog/${post.number}', '_blank')">${post.title}</h2>`;
             }
 
             const labelsHtml = post.labels.map(label =>
-                `<span class="card-label" style="background-color: #${label.color}" onclick="location.href='/tag/${label.name}'">${label.name}</span>`
+                `<span class="card-label" style="background-color: #${label.color}" onclick="window.open('/tag/${label.name}', '_blank')">${label.name}</span>`
             ).join('');
 
             const reactionsHtml = Object.entries(post.reactions).map(([reaction, count]) =>
