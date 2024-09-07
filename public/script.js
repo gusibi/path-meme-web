@@ -67,6 +67,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
                     </div>
                 </div>
+                <div class="floating-time-label">
+                    <i class="clock-icon">🕒</i>
+                    <span class="time">${formattedTime}</span>
+                    <span class="date">${formattedDate}</span>
+                </div>
             `;
 
             timeline.appendChild(card);
@@ -75,6 +80,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error:', error);
         timeline.innerHTML = `<p>Error: ${error.message}</p>`;
     }
+
+    // 添加滚动事件监听器
+    window.addEventListener('scroll', () => {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const label = card.querySelector('.floating-time-label');
+            const rect = card.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+
+            if (rect.top < windowHeight && rect.bottom > 0) {
+                // 卡片在视口中可见
+                label.style.position = 'fixed';
+                label.style.top = `${Math.max(0, Math.min(windowHeight - label.offsetHeight, rect.top))}px`;
+            } else {
+                // 卡片不在视口中
+                label.style.position = 'absolute';
+                label.style.top = '50%';
+            }
+        });
+    });
 });
 
 function getReactionEmoji(reaction) {
