@@ -5,8 +5,8 @@
     --header-bg-color: #EC1C24;
     --footer-bg-color: #fff;
     --timeline-color: #ccc;
-    --reaction-bg: #f3f3f3;
-    --reaction-hover-bg: #e6e6e6;
+    --max-content-width: 800px;
+    --timeline-left-space: 50px;
 }
 
 body {
@@ -57,6 +57,8 @@ nav {
     position: relative;
     height: 300px;
     overflow: hidden;
+    max-width: var(--max-content-width);
+    margin: 0 auto;
 }
 
 .banner-image {
@@ -67,28 +69,28 @@ nav {
 
 .avatar {
     position: absolute;
-    bottom: 20px;
-    left: 30px;
+    bottom: -30px;
+    left: var(--timeline-left-space);
+    transform: translateX(-50%);
     width: 60px;
     height: 60px;
     border-radius: 50%;
     border: 3px solid white;
+    z-index: 2;
 }
 
 .timeline {
     position: relative;
-    padding: 20px 0 20px 60px;
-    /* 增加左侧padding以容纳标签 */
+    padding: 40px 0 20px 0;
     margin: 0 auto;
-    max-width: 800px;
+    max-width: var(--max-content-width);
 }
 
 .timeline::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 30px;
-    /* 调整时间线位置 */
+    left: var(--timeline-left-space);
     height: 100%;
     width: 2px;
     background: var(--timeline-color);
@@ -101,12 +103,9 @@ nav {
     margin-bottom: 30px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
-    width: 700px;
-    /* 设置固定宽度 */
-    max-width: 100%;
-    /* 确保在小屏幕上不会溢出 */
-    margin-left: auto;
-    margin-right: auto;
+    width: calc(100% - var(--timeline-left-space) - 20px);
+    margin-left: calc(var(--timeline-left-space) + 20px);
+    box-sizing: border-box;
 }
 
 .card-title {
@@ -125,30 +124,34 @@ nav {
 }
 
 .card-content {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9em;
-    color: #666;
+    padding-top: 15px;
+    border-top: 1px solid var(--timeline-color);
 }
 
 .card-footer-left,
 .card-footer-right {
     display: flex;
     align-items: center;
+    gap: 15px;
 }
 
 .card-datetime {
     margin-right: 10px;
 }
 
-.card-reactions {
+.card-reactions,
+.card-comments {
     display: flex;
     align-items: center;
+    gap: 5px;
+    cursor: pointer;
 }
 
 .reaction {
@@ -162,11 +165,6 @@ nav {
 
 .reaction:hover {
     background-color: var(--reaction-hover-bg);
-}
-
-.card-comments {
-    margin-right: 10px;
-    cursor: pointer;
 }
 
 .card-labels {
@@ -203,27 +201,52 @@ a:hover {
 
 /* 详情页样式 */
 .post-detail {
-    max-width: 800px;
+    max-width: var(--max-content-width);
     margin: 0 auto;
-    padding: 20px;
+    padding: 40px 20px;
+    background-color: var(--card-bg-color);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
-.comment-list {
-    margin-top: 20px;
+.post-detail h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.post-content {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.comment-section {
+    margin-top: 40px;
+    border-top: 1px solid var(--timeline-color);
+    padding-top: 20px;
 }
 
 .comment {
-    background-color: var(--card-bg-color);
+    background-color: var(--bg-color);
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 15px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .comment-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    font-size: 0.9em;
 }
 
 .comment-author {
@@ -236,7 +259,8 @@ a:hover {
 }
 
 .comment-body {
-    margin-bottom: 10px;
+    font-size: 1em;
+    line-height: 1.4;
 }
 
 .comment-button {
@@ -299,43 +323,47 @@ footer {
 
 .card img {
     max-width: 100%;
-    /* 确保图片不会超出卡片宽度 */
     height: auto;
-    /* 保持图片比例 */
 }
 
 .timeline-point {
     position: absolute;
-    left: -45px;
-    /* 调整标签位置 */
+    left: calc(var(--timeline-left-space) - 20px);
     top: 20px;
-    /* 将标签固定在卡片顶部 */
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    background-color: var(--card-bg-color);
+    border: 2px solid var(--timeline-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: var(--text-color);
     font-weight: bold;
-    font-size: 0.8em;
-    /* 调整字体大小 */
+    font-size: 1em;
     z-index: 1;
+    box-shadow: 0 0 0 4px var(--bg-color), 0 2px 5px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
+    :root {
+        --timeline-left-space: 40px;
+    }
+
+    .avatar {
+        left: var(--timeline-left-space);
+    }
+
     .timeline {
-        padding-left: 40px;
-        /* 在小屏幕上减少左侧padding */
+        padding-left: var(--timeline-left-space);
     }
 
     .card {
-        width: calc(100% - 40px);
-        /* 在小屏幕上调整卡片宽度 */
+        width: calc(100% - 20px);
+        margin-left: 20px;
     }
 
     .timeline-point {
-        left: -35px;
-        /* 在小屏幕上调整标签位置 */
+        left: calc(var(--timeline-left-space) - 20px);
     }
 }

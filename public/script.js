@@ -157,14 +157,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderBlogPostDetail(post) {
-        const date = new Date(post.created_at);
-        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-        const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-
         app.innerHTML = `
             <div class="post-detail">
-                ${renderCardContent(post)}
-                <div class="comment-list">
+                <h1>${post.title}</h1>
+                <div class="post-meta">
+                    <span>${formatDate(post.created_at)}</span>
+                    <span>${renderLabels(post.labels)}</span>
+                </div>
+                <div class="post-content">${marked(post.body)}</div>
+                ${renderReactions(post.reactions)}
+                <div class="comment-section">
                     <h3>Comments</h3>
                     ${post.comments && post.comments.length > 0 ? renderComments(post.comments) : '<p>No comments yet.</p>'}
                 </div>
@@ -185,11 +187,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="card-footer-left">
                     <span class="card-datetime">${formatDate(post.created_at)}</span>
                     ${renderReactions(post.reactions)}
+                </div>
+                <div class="card-footer-right">
                     <span class="card-comments" onclick="router.navigate('/blog/${post.number}')">
                         💬 ${post.comments || 0}
                     </span>
-                </div>
-                <div class="card-footer-right">
                     ${renderLabels(post.labels)}
                     <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
                 </div>
