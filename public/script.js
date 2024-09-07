@@ -233,11 +233,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="comment">
                 <div class="comment-header">
                     <span class="comment-author">${comment.user.login}</span>
-                    <span class="comment-date">${formatDate(comment.created_at, true)}</span>
+                    <span class="comment-date">${githubFormatDate(comment.created_at, true)}</span>
                 </div>
                 <div class="comment-body">${marked(comment.body)}</div>
             </div>
         `).join('');
+    }
+
+    // 确保 formatDate 函数使用正确的格式
+    function githubFormatDate(dateString, showYear = false) {
+        const date = new Date(dateString);
+        const options = {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        };
+        return new Intl.DateTimeFormat('en-US', options).format(date);
     }
 
     function formatDate(dateString, showYear = false) {
