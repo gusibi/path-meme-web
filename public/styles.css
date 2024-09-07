@@ -77,15 +77,17 @@ nav {
 
 .timeline {
     position: relative;
-    padding: 20px 0 20px 40px;
-    /* 增加左侧padding */
+    padding: 20px 0 20px 60px;
+    /* 增加左侧padding以容纳标签 */
+    margin: 0 auto;
+    max-width: 800px;
 }
 
 .timeline::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 20px;
+    left: 30px;
     /* 调整时间线位置 */
     height: 100%;
     width: 2px;
@@ -95,12 +97,16 @@ nav {
 .card {
     background-color: var(--card-bg-color);
     border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
-    overflow: hidden;
-    /* 添加这行来防止内容溢出 */
+    width: 700px;
+    /* 设置固定宽度 */
+    max-width: 100%;
+    /* 确保在小屏幕上不会溢出 */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .card-title {
@@ -300,10 +306,10 @@ footer {
 
 .timeline-point {
     position: absolute;
-    left: -35px;
-    /* 调整时间线点的位置 */
-    top: 15px;
-    /* 调整时间线点的垂直位置 */
+    left: -45px;
+    /* 调整标签位置 */
+    top: 20px;
+    /* 将标签固定在卡片顶部 */
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -312,6 +318,24 @@ footer {
     align-items: center;
     color: #fff;
     font-weight: bold;
+    font-size: 0.8em;
+    /* 调整字体大小 */
     z-index: 1;
-    /* 确保时间线点在卡片之上 */
+}
+
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 40px;
+        /* 在小屏幕上减少左侧padding */
+    }
+
+    .card {
+        width: calc(100% - 40px);
+        /* 在小屏幕上调整卡片宽度 */
+    }
+
+    .timeline-point {
+        left: -35px;
+        /* 在小屏幕上调整标签位置 */
+    }
 }
