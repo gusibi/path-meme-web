@@ -141,6 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load a single blog post
     async function loadBlogPost(postId) {
+        console.log("postId: ", postId)
         try {
             const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts/${postId}`);
             if (!response.ok) {
@@ -189,6 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load blog posts by tag
     async function loadBlogPostsByTag(tagName) {
+        console.log("tagName: ", tagName)
         try {
             const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts?tag=${tagName}`);
             if (!response.ok) {
