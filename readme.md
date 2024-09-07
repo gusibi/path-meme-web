@@ -4,6 +4,9 @@
 
 Path Meme 是一个简洁、现代的博客系统，灵感来源于 Path 应用的用户界面。它使用 GitHub Issues 作为内容管理系统，通过 Cloudflare Workers 提供 API 服务，并使用 Cloudflare Pages 进行静态网站托管。这个系统提供了一个时间线式的博客展示，支持 Markdown 渲染、标签分类、反应统计等功能。
 
+项目地址: [https://github.com/gusibi/path-momo-web](https://github.com/gusibi/path-momo-web)
+demo: [https://momo.gusibi.mobi](https://momo.gusibi.mobi)
+
 ## 特性
 
 - 使用 GitHub Issues 作为 CMS
