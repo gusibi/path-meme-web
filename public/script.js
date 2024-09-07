@@ -231,7 +231,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 const labelsHtml = post.labels.map(label =>
-                    card.innerHTML = `
+                    `<span class="card-label" style="background-color: #${label.color}" onclick="router.navigate('/tag/${label.name}')">${label.name}</span>`
+                ).join('');
+
+                const reactionsHtml = Object.entries(post.reactions).map(([reaction, count]) =>
+                    count > 0 ? `<span class="reaction">${getReactionEmoji(reaction)} ${count}</span>` : ''
+                ).join('');
+
+                const firstLabelChar = post.labels.length > 0 ? post.labels[0].name.charAt(0) : '•';
+                const labelColor = post.labels.length > 0 ? `#${post.labels[0].color}` : '#ccc';
+
+                card.innerHTML = `
                 <div class="timeline-point" style="background-color: ${labelColor};">${firstLabelChar}</div>
                 ${titleHtml}
                 <div class="card-content">${marked(post.body)}</div>
@@ -246,7 +256,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                 </div>
             `;
-
                 timeline.appendChild(card);
             });
         } catch (error) {
@@ -254,32 +263,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             timeline.innerHTML = `<p>Error: ${error.message}</p>`;
         }
 
-        // 添加滚动事件监听器
-        let isScrolling;
-        window.addEventListener('scroll', () => {
-            clearTimeout(isScrolling);
-            floatingTimeLabel.style.opacity = '1';
-
-            const cards = document.querySelectorAll('.card');
-            let visibleCard = null;
-
-            cards.forEach(card => {
-                const rect = card.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    visibleCard = card;
-                }
-            });
-
-            if (visibleCard) {
-                const dateTime = visibleCard.querySelector('.card-datetime').textContent;
-                floatingTimeLabel.textContent = dateTime;
-            }
-
-            isScrolling = setTimeout(() => {
-                floatingTimeLabel.style.opacity = '0';
-            }, 1500);
-        });
-    });
+    }
+});
 
 function getReactionEmoji(reaction) {
     const reactionMap = {
