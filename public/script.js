@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize router
     const router = new Navigo('/');
+    // 使 router 全局可访问
+    window.router = router;
+
+    // 方法 1: 使用事件监听器
+    document.querySelector('.logo').addEventListener('click', (e) => {
+        e.preventDefault();
+        router.navigate('/');
+    });
 
     router
         .on('/', async () => {
