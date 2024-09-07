@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${renderCardContent(post)}
                 <div class="comment-list">
                     <h3>Comments</h3>
-                    ${renderComments(post.comments)}
+                    ${post.comments && post.comments.length > 0 ? renderComments(post.comments) : '<p>No comments yet.</p>'}
                 </div>
                 <a href="${post.html_url}" class="comment-button" target="_blank">Comment on GitHub</a>
             </div>
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <span class="card-datetime">${formatDate(post.created_at)}</span>
                     ${renderReactions(post.reactions)}
                     <span class="card-comments" onclick="router.navigate('/blog/${post.number}')">
-                        💬 ${post.comments}
+                        💬 ${post.comments || 0}
                     </span>
                 </div>
                 <div class="card-footer-right">

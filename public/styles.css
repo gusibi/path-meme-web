@@ -77,16 +77,16 @@ nav {
 
 .timeline {
     position: relative;
-    padding: 20px 0 20px 30px;
-    margin: 0 auto;
-    max-width: 800px;
+    padding: 20px 0 20px 40px;
+    /* 增加左侧padding */
 }
 
 .timeline::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 15px;
+    left: 20px;
+    /* 调整时间线位置 */
     height: 100%;
     width: 2px;
     background: var(--timeline-color);
@@ -99,6 +99,8 @@ nav {
     margin-bottom: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     position: relative;
+    overflow: hidden;
+    /* 添加这行来防止内容溢出 */
 }
 
 .card-title {
@@ -287,4 +289,29 @@ footer {
     font-weight: bold;
     margin: 20px 0;
     color: var(--text-color);
+}
+
+.card img {
+    max-width: 100%;
+    /* 确保图片不会超出卡片宽度 */
+    height: auto;
+    /* 保持图片比例 */
+}
+
+.timeline-point {
+    position: absolute;
+    left: -35px;
+    /* 调整时间线点的位置 */
+    top: 15px;
+    /* 调整时间线点的垂直位置 */
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: bold;
+    z-index: 1;
+    /* 确保时间线点在卡片之上 */
 }

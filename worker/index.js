@@ -17,7 +17,7 @@ async function handleRequest(request, env) {
             return await fetchBlogPosts(env);
         } else if (path.length === 3 && path[0] === 'api' && path[1] === 'blog-posts') {
             const postId = path[2];
-            return await fetchBlogPostById(env, postId);
+            return await fetchBlogPostWithComments(env, postId);
         } else {
             return new Response('Not Found', { status: 404 });
         }
@@ -71,6 +71,7 @@ async function fetchBlogPosts(env) {
             created_at: issue.created_at,
             labels: issue.labels,
             reactions: issue.reactions,
+            comments: issue.comments,
             html_url: issue.html_url
         }));
 
@@ -92,23 +93,34 @@ function corsHeaders() {
     };
 }
 
-async function fetchBlogPostById(env, postId) {
+async function fetchBlogPostWithComments(env, postId) {
     const GITHUB_TOKEN = env.GITHUB_TOKEN; // 替换为你的 GitHub 个人访问令牌
     const owner = env.GITHUB_OWNER;
     const repo = env.GITHUB_REPO;
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${postId}`, {
-        headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Cloudflare Worker'
-        }
-    });
+    const [postResponse, commentsResponse] = await Promise.all([
+        fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${postId}`, {
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'Cloudflare Worker'
+            }
+        }),
+        fetch(`https://api.github.com/repos/${owner}/${repo}/issues/${postId}/comments`, {
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'Cloudflare Worker'
+            }
+        })
+    ]);
 
-    if (!response.ok) {
-        throw new Error(`GitHub API request failed with status ${response.status}`);
+    if (!postResponse.ok || !commentsResponse.ok) {
+        throw new Error(`GitHub API request failed`);
     }
 
-    const issue = await response.json();
+    const issue = await postResponse.json();
+    const comments = await commentsResponse.json();
+
     const blogPost = {
         number: issue.number,
         title: issue.title,
@@ -116,11 +128,15 @@ async function fetchBlogPostById(env, postId) {
         created_at: issue.created_at,
         labels: issue.labels,
         reactions: issue.reactions,
+        comments: comments,
         html_url: issue.html_url
     };
 
     return new Response(JSON.stringify(blogPost), {
-        headers: corsHeaders()
+        headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        }
     });
 }
 
@@ -148,6 +164,7 @@ async function fetchBlogPostsByTag(env, tag) {
         created_at: issue.created_at,
         labels: issue.labels,
         reactions: issue.reactions,
+        comments: issue.comments,
         html_url: issue.html_url
     }));
 
