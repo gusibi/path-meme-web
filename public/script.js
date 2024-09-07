@@ -20,23 +20,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Initialize router
-    const router = new Navigo('/', { hash: true });
+    const router = new Navigo('/');
 
-    router.on({
-        '/': async () => {
+    router
+        .on('/', async () => {
             app.innerHTML = '<div class="timeline"></div>';
             const timeline = document.querySelector('.timeline');
             await loadBlogPosts(timeline);
-        },
-        '/blog/:id': async (params) => {
-            const postId = params.id;
+        })
+        .on('/blog/:id', async ({ data }) => {
+            const postId = data.id;
+            console.log("Loading blog post with ID:", postId);
             await loadBlogPost(postId);
-        },
-        '/tag/:name': async (params) => {
-            const tagName = params.name;
+        })
+        .on('/tag/:name', async ({ data }) => {
+            const tagName = data.name;
+            console.log("Loading blog posts with tag:", tagName);
             await loadBlogPostsByTag(tagName);
-        }
-    }).resolve();
+        })
+        .resolve();
 
     // Load all blog posts
     async function loadBlogPosts(timeline) {
@@ -75,11 +77,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 let titleHtml = '';
                 if (post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')) {
-                    titleHtml = `<h2 class="card-title" onclick="router.navigate('/blog/${post.number}')">${post.title}</h2>`;
+                    titleHtml = `<h2 class="card-title"><a href="/blog/${post.number}" data-navigo>${post.title}</a></h2>`;
                 }
 
                 const labelsHtml = post.labels.map(label =>
-                    `<span class="card-label" style="background-color: #${label.color}" onclick="router.navigate('/tag/${label.name}')">${label.name}</span>`
+                    `<span class="card-label" style="background-color: #${label.color}"><a href="/tag/${encodeURIComponent(label.name)}" data-navigo>${label.name}</a></span>`
                 ).join('');
 
                 const reactionsHtml = Object.entries(post.reactions).map(([reaction, count]) =>
@@ -141,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load a single blog post
     async function loadBlogPost(postId) {
-        console.log("postId: ", postId)
+        console.log("loadBlogPost called with postId:", postId);
         try {
             const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts/${postId}`);
             if (!response.ok) {
@@ -190,9 +192,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load blog posts by tag
     async function loadBlogPostsByTag(tagName) {
-        console.log("tagName: ", tagName)
+        console.log("loadBlogPostsByTag called with tagName:", tagName);
         try {
-            const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts?tag=${tagName}`);
+            const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts?tag=${encodeURIComponent(tagName)}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -244,27 +246,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const labelColor = post.labels.length > 0 ? `#${post.labels[0].color}` : '#ccc';
 
                 card.innerHTML = `
-                <div class="timeline-point" style="background-color: ${labelColor};">${firstLabelChar}</div>
-                ${titleHtml}
-                <div class="card-content">${marked(post.body)}</div>
-                <div class="card-footer">
-                    <div class="card-footer-left">
-                        <span class="card-datetime">${formattedDate} ${formattedTime}</span>
-                        <div class="card-reactions">${reactionsHtml}</div>
+                    <div class="timeline-point" style="background-color: ${labelColor};">${firstLabelChar}</div>
+                    ${titleHtml}
+                    <div class="card-content">${marked(post.body)}</div>
+                    <div class="card-footer">
+                        <div class="card-footer-left">
+                            <span class="card-datetime">${formattedDate} ${formattedTime}</span>
+                            <div class="card-reactions">${reactionsHtml}</div>
+                        </div>
+                        <div class="card-footer-right">
+                            <div class="card-labels">${labelsHtml}</div>
+                            <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
+                        </div>
                     </div>
-                    <div class="card-footer-right">
-                        <div class="card-labels">${labelsHtml}</div>
-                        <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
-                    </div>
-                </div>
-            `;
+                `;
+
                 timeline.appendChild(card);
             });
         } catch (error) {
             console.error('Error:', error);
-            timeline.innerHTML = `<p>Error: ${error.message}</p>`;
+            app.innerHTML = `<p>Error: ${error.message}</p>`;
         }
-
     }
 });
 
