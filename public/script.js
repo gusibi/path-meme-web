@@ -30,13 +30,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         })
         .on('/blog/:id', async ({ data }) => {
             const postId = data.id;
-            console.log("Loading blog post with ID:", postId);
             await loadBlogPost(postId);
         })
         .on('/tag/:name', async ({ data }) => {
             const tagName = data.name;
-            console.log("Loading blog posts with tag:", tagName);
-            await loadBlogPostsByTag(tagName);
+            app.innerHTML = '<div class="timeline"></div>';
+            const timeline = document.querySelector('.timeline');
+            await loadBlogPostsByTag(tagName, timeline);
         })
         .resolve();
 
@@ -55,60 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            let currentMonth = '';
-            blogPosts.forEach((post, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-
-                const date = new Date(post.created_at);
-                const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-
-                if (monthYear !== currentMonth) {
-                    if (index > 0) {
-                        const monthDivider = document.createElement('div');
-                        monthDivider.className = 'month-divider';
-                        monthDivider.textContent = currentMonth;
-                        timeline.appendChild(monthDivider);
-                    }
-                    currentMonth = monthYear;
-                }
-
-                let titleHtml = '';
-                if (post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')) {
-                    titleHtml = `<h2 class="card-title"><a href="/blog/${post.number}" data-navigo>${post.title}</a></h2>`;
-                }
-
-                const labelsHtml = post.labels.map(label =>
-                    `<span class="card-label" style="background-color: #${label.color}"><a href="/tag/${encodeURIComponent(label.name)}" data-navigo>${label.name}</a></span>`
-                ).join('');
-
-                const reactionsHtml = Object.entries(post.reactions).map(([reaction, count]) =>
-                    count > 0 ? `<span class="reaction">${getReactionEmoji(reaction)} ${count}</span>` : ''
-                ).join('');
-
-                const firstLabelChar = post.labels.length > 0 ? post.labels[0].name.charAt(0) : '•';
-                const labelColor = post.labels.length > 0 ? `#${post.labels[0].color}` : '#ccc';
-
-                card.innerHTML = `
-                    <div class="timeline-point" style="background-color: ${labelColor};">${firstLabelChar}</div>
-                    ${titleHtml}
-                    <div class="card-content">${marked(post.body)}</div>
-                    <div class="card-footer">
-                        <div class="card-footer-left">
-                            <span class="card-datetime">${formattedDate} ${formattedTime}</span>
-                            <div class="card-reactions">${reactionsHtml}</div>
-                        </div>
-                        <div class="card-footer-right">
-                            <div class="card-labels">${labelsHtml}</div>
-                            <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
-                        </div>
-                    </div>
-                `;
-
-                timeline.appendChild(card);
-            });
+            renderBlogPosts(blogPosts, timeline);
         } catch (error) {
             console.error('Error:', error);
             timeline.innerHTML = `<p>Error: ${error.message}</p>`;
@@ -143,7 +90,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load a single blog post
     async function loadBlogPost(postId) {
-        console.log("loadBlogPost called with postId:", postId);
         try {
             const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts/${postId}`);
             if (!response.ok) {
@@ -151,39 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             const post = await response.json();
-            const date = new Date(post.created_at);
-            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-
-            let titleHtml = '';
-            if (post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')) {
-                titleHtml = `<h2 class="card-title">${post.title}</h2>`;
-            }
-
-            const labelsHtml = post.labels.map(label =>
-                `<span class="card-label" style="background-color: #${label.color}" onclick="router.navigate('/tag/${label.name}')">${label.name}</span>`
-            ).join('');
-
-            const reactionsHtml = Object.entries(post.reactions).map(([reaction, count]) =>
-                count > 0 ? `<span class="reaction">${getReactionEmoji(reaction)} ${count}</span>` : ''
-            ).join('');
-
-            app.innerHTML = `
-                <div class="card">
-                    ${titleHtml}
-                    <div class="card-content">${marked(post.body)}</div>
-                    <div class="card-footer">
-                        <div class="card-footer-left">
-                            <span class="card-datetime">${formattedDate} ${formattedTime}</span>
-                            <div class="card-reactions">${reactionsHtml}</div>
-                        </div>
-                        <div class="card-footer-right">
-                            <div class="card-labels">${labelsHtml}</div>
-                            <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
-                        </div>
-                    </div>
-                </div>
-            `;
+            renderBlogPostDetail(post);
         } catch (error) {
             console.error('Error:', error);
             app.innerHTML = `<p>Error: ${error.message}</p>`;
@@ -191,8 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Load blog posts by tag
-    async function loadBlogPostsByTag(tagName) {
-        console.log("loadBlogPostsByTag called with tagName:", tagName);
+    async function loadBlogPostsByTag(tagName, timeline) {
         try {
             const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts?tag=${encodeURIComponent(tagName)}`);
             if (!response.ok) {
@@ -202,71 +115,126 @@ document.addEventListener('DOMContentLoaded', async () => {
             const blogPosts = await response.json();
 
             if (blogPosts.length === 0) {
-                app.innerHTML = '<p>No blog posts found.</p>';
+                timeline.innerHTML = '<p>No blog posts found.</p>';
                 return;
             }
 
-            app.innerHTML = '<div class="timeline"></div>';
-            const timeline = document.querySelector('.timeline');
-
-            let currentMonth = '';
-            blogPosts.forEach((post, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-
-                const date = new Date(post.created_at);
-                const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-
-                if (monthYear !== currentMonth) {
-                    if (index > 0) {
-                        const monthDivider = document.createElement('div');
-                        monthDivider.className = 'month-divider';
-                        monthDivider.textContent = currentMonth;
-                        timeline.appendChild(monthDivider);
-                    }
-                    currentMonth = monthYear;
-                }
-
-                let titleHtml = '';
-                if (post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')) {
-                    titleHtml = `<h2 class="card-title" onclick="router.navigate('/blog/${post.number}')">${post.title}</h2>`;
-                }
-
-                const labelsHtml = post.labels.map(label =>
-                    `<span class="card-label" style="background-color: #${label.color}" onclick="router.navigate('/tag/${label.name}')">${label.name}</span>`
-                ).join('');
-
-                const reactionsHtml = Object.entries(post.reactions).map(([reaction, count]) =>
-                    count > 0 ? `<span class="reaction">${getReactionEmoji(reaction)} ${count}</span>` : ''
-                ).join('');
-
-                const firstLabelChar = post.labels.length > 0 ? post.labels[0].name.charAt(0) : '•';
-                const labelColor = post.labels.length > 0 ? `#${post.labels[0].color}` : '#ccc';
-
-                card.innerHTML = `
-                    <div class="timeline-point" style="background-color: ${labelColor};">${firstLabelChar}</div>
-                    ${titleHtml}
-                    <div class="card-content">${marked(post.body)}</div>
-                    <div class="card-footer">
-                        <div class="card-footer-left">
-                            <span class="card-datetime">${formattedDate} ${formattedTime}</span>
-                            <div class="card-reactions">${reactionsHtml}</div>
-                        </div>
-                        <div class="card-footer-right">
-                            <div class="card-labels">${labelsHtml}</div>
-                            <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
-                        </div>
-                    </div>
-                `;
-
-                timeline.appendChild(card);
-            });
+            renderBlogPosts(blogPosts, timeline);
         } catch (error) {
             console.error('Error:', error);
-            app.innerHTML = `<p>Error: ${error.message}</p>`;
+            timeline.innerHTML = `<p>Error: ${error.message}</p>`;
         }
+    }
+
+    function renderBlogPosts(blogPosts, timeline) {
+        let currentMonth = '';
+        blogPosts.forEach((post, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            const date = new Date(post.created_at);
+            const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+            if (monthYear !== currentMonth) {
+                if (index > 0) {
+                    const monthDivider = document.createElement('div');
+                    monthDivider.className = 'month-divider';
+                    monthDivider.textContent = currentMonth;
+                    timeline.appendChild(monthDivider);
+                }
+                currentMonth = monthYear;
+            }
+
+            card.innerHTML = `
+                <div class="timeline-point" style="background-color: ${getLabelColor(post.labels)};">${getFirstLabelChar(post.labels)}</div>
+                ${renderCardContent(post)}
+            `;
+
+            timeline.appendChild(card);
+        });
+    }
+
+    function renderBlogPostDetail(post) {
+        const date = new Date(post.created_at);
+        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+        app.innerHTML = `
+            <div class="post-detail">
+                ${renderCardContent(post)}
+                <div class="comment-list">
+                    <h3>Comments</h3>
+                    ${renderComments(post.comments)}
+                </div>
+                <a href="${post.html_url}" class="comment-button" target="_blank">Comment on GitHub</a>
+            </div>
+        `;
+    }
+
+    function renderCardContent(post) {
+        const titleHtml = post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')
+            ? `<h2 class="card-title"><a href="/blog/${post.number}" data-navigo>${post.title}</a></h2>`
+            : '';
+
+        return `
+            ${titleHtml}
+            <div class="card-content">${marked(post.body)}</div>
+            <div class="card-footer">
+                <div class="card-footer-left">
+                    <span class="card-datetime">${formatDate(post.created_at)}</span>
+                    ${renderReactions(post.reactions)}
+                    <span class="card-comments" onclick="router.navigate('/blog/${post.number}')">
+                        💬 ${post.comments}
+                    </span>
+                </div>
+                <div class="card-footer-right">
+                    ${renderLabels(post.labels)}
+                    <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderReactions(reactions) {
+        const reactionHtml = Object.entries(reactions)
+            .filter(([_, count]) => count > 0)
+            .slice(0, 3)
+            .map(([reaction, count]) => `<span class="reaction">${getReactionEmoji(reaction)} ${count}</span>`)
+            .join('');
+        return `<div class="card-reactions">${reactionHtml}</div>`;
+    }
+
+    function renderLabels(labels) {
+        return labels.map(label =>
+            `<span class="card-label" style="background-color: #${label.color}"><a href="/tag/${encodeURIComponent(label.name)}" data-navigo>${label.name}</a></span>`
+        ).join('');
+    }
+
+    function renderComments(comments) {
+        return comments.map(comment => `
+            <div class="comment">
+                <div class="comment-header">
+                    <span class="comment-author">${comment.user.login}</span>
+                    <span class="comment-date">${formatDate(comment.created_at)}</span>
+                </div>
+                <div class="comment-body">${marked(comment.body)}</div>
+            </div>
+        `).join('');
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    }
+
+    function getLabelColor(labels) {
+        return labels.length > 0 ? `#${labels[0].color}` : '#ccc';
+    }
+
+    function getFirstLabelChar(labels) {
+        return labels.length > 0 ? labels[0].name.charAt(0) : '•';
     }
 });
 
