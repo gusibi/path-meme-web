@@ -189,13 +189,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="card-content">${marked(post.body)}</div>
             <div class="card-footer">
                 <div class="card-footer-left">
-                    <span class="card-datetime">${formatDate(post.created_at, false)}</span>
+                    <span class="card-datetime">${formatDate(post.created_at, !isMobile)}</span>
                     ${reactions}
                 </div>
                 <div class="card-footer-right">
-                    <span class="card-comments" onclick="router.navigate('/blog/${post.number}')">
+                    <a href="/blog/${post.number}" class="card-comments" data-navigo>
                         💬 ${post.comments || 0}
-                    </span>
+                    </a>
                     ${labels}
                     <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
                 </div>

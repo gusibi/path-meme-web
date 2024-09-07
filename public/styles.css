@@ -98,7 +98,7 @@ nav {
     content: '';
     position: absolute;
     top: 0;
-    left: 15px;
+    left: 20px;
     height: 100%;
     width: 2px;
     background: var(--timeline-color);
@@ -316,6 +316,10 @@ footer {
     .timeline {
         padding-left: 20px;
         padding-right: 20px;
+    }
+
+    .card {
+        margin-left: 30px;
     }
 
     .post-detail .avatar {
