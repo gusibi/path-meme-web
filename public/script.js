@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const timeline = document.querySelector('.timeline');
     const nightModeBtn = document.querySelector('.night-mode-btn');
+    const floatingTimeLabel = document.createElement('div');
+    floatingTimeLabel.className = 'floating-time-label';
+    document.body.appendChild(floatingTimeLabel);
 
     // Night mode toggle
     nightModeBtn.addEventListener('click', () => {
@@ -29,13 +32,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        blogPosts.forEach(post => {
+        let currentMonth = '';
+        blogPosts.forEach((post, index) => {
             const card = document.createElement('div');
             card.className = 'card';
 
             const date = new Date(post.created_at);
-            const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             const formattedTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+            const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+            if (monthYear !== currentMonth) {
+                if (index > 0) {
+                    const monthDivider = document.createElement('div');
+                    monthDivider.className = 'month-divider';
+                    monthDivider.textContent = currentMonth;
+                    timeline.appendChild(monthDivider);
+                }
+                currentMonth = monthYear;
+            }
 
             let titleHtml = '';
             if (post.title && !post.labels.some(label => label.name.toLowerCase() === 'meme')) {
@@ -50,27 +65,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 count > 0 ? `<span class="reaction">${getReactionEmoji(reaction)} ${count}</span>` : ''
             ).join('');
 
+            const firstLabelChar = post.labels.length > 0 ? post.labels[0].name.charAt(0) : '•';
+            const labelColor = post.labels.length > 0 ? `#${post.labels[0].color}` : '#ccc';
+
             card.innerHTML = `
-                <div class="card-date">
-                    <span class="card-date-icon">🕒</span>
-                    <span class="card-date-text">${formattedDate}</span>
-                </div>
+                <div class="timeline-point" style="background-color: ${labelColor};">${firstLabelChar}</div>
                 ${titleHtml}
                 <div class="card-content">${marked(post.body)}</div>
                 <div class="card-footer">
                     <div class="card-footer-left">
-                        <span class="card-time">${formattedTime}</span>
+                        <span class="card-datetime">${formattedDate} ${formattedTime}</span>
                         <div class="card-reactions">${reactionsHtml}</div>
                     </div>
                     <div class="card-footer-right">
                         <div class="card-labels">${labelsHtml}</div>
                         <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
                     </div>
-                </div>
-                <div class="floating-time-label">
-                    <i class="clock-icon">🕒</i>
-                    <span class="time">${formattedTime}</span>
-                    <span class="date">${formattedDate}</span>
                 </div>
             `;
 
@@ -82,23 +92,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // 添加滚动事件监听器
+    let isScrolling;
     window.addEventListener('scroll', () => {
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            const label = card.querySelector('.floating-time-label');
-            const rect = card.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
+        clearTimeout(isScrolling);
+        floatingTimeLabel.style.opacity = '1';
 
-            if (rect.top < windowHeight && rect.bottom > 0) {
-                // 卡片在视口中可见
-                label.style.position = 'fixed';
-                label.style.top = `${Math.max(0, Math.min(windowHeight - label.offsetHeight, rect.top))}px`;
-            } else {
-                // 卡片不在视口中
-                label.style.position = 'absolute';
-                label.style.top = '50%';
+        const cards = document.querySelectorAll('.card');
+        let visibleCard = null;
+
+        cards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                visibleCard = card;
             }
         });
+
+        if (visibleCard) {
+            const dateTime = visibleCard.querySelector('.card-datetime').textContent;
+            floatingTimeLabel.textContent = dateTime;
+        }
+
+        isScrolling = setTimeout(() => {
+            floatingTimeLabel.style.opacity = '0';
+        }, 1500);
     });
 });
 
