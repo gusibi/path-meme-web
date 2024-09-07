@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="card-content">${marked(post.body)}</div>
             <div class="card-footer">
                 <div class="card-footer-left">
-                    <span class="card-datetime">${formatDate(post.created_at, !isMobile)}</span>
+                    <span class="card-datetime">${formatDate(post.created_at, false)}</span>
                     ${reactions}
                 </div>
                 <div class="card-footer-right">
@@ -242,11 +242,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function formatDate(dateString, showYear = false) {
         const date = new Date(dateString);
-        const options = showYear
-            ? { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }
-            : { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-        return new Intl.DateTimeFormat('en-US', options).format(date);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        if (showYear) {
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+        } else {
+            return `${month}-${day} ${hours}:${minutes}`;
+        }
     }
+
 
     function getLabelColor(labels) {
         return labels.length > 0 ? `#${labels[0].color}` : '#ccc';

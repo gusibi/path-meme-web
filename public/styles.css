@@ -104,21 +104,10 @@ nav {
     background: var(--timeline-color);
 }
 
-.card {
-    background-color: var(--card-bg-color);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 30px;
-    margin-left: 45px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
-
 .timeline-point {
     position: absolute;
-    left: 1px;
+    left: 15px;
     top: 20px;
-    transform: translateX(-50%);
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -129,6 +118,16 @@ nav {
     font-weight: bold;
     border: 2px solid white;
     z-index: 1;
+}
+
+.card {
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    margin-left: 45px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .card-datetime {
@@ -258,7 +257,7 @@ footer {
 /* Post detail styles */
 .post-detail {
     max-width: var(--max-content-width);
-    margin: 0 auto;
+    margin: 40px auto;
     background-color: var(--card-bg-color);
     border-radius: 8px;
     padding: 40px;
@@ -295,6 +294,19 @@ footer {
     background-color: darken(var(--primary-color), 10%);
     text-decoration: none;
 }
+
+
+.post-detail .post-content {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.post-detail .comment-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--timeline-color);
+}
+
 
 @media (max-width: 768px) {
     .avatar {
@@ -334,4 +346,14 @@ footer {
     .card-label {
         flex-shrink: 0;
     }
+
+    .post-detail {
+        padding: 20px;
+    }
+
+    .post-detail .post-content {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
 }
