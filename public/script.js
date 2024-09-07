@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="post-detail">
                 <h1>${post.title}</h1>
                 <div class="post-meta">
-                    <span>${formatDate(post.created_at)}</span>
+                    <span>${formatDate(post.created_at, true)}</span>
                     <span>${renderLabels(post.labels)}</span>
                 </div>
                 <div class="post-content">${marked(post.body)}</div>
@@ -180,19 +180,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             ? `<h2 class="card-title"><a href="/blog/${post.number}" data-navigo>${post.title}</a></h2>`
             : '';
 
+        const isMobile = window.innerWidth <= 768;
+        const reactions = isMobile ? renderReactions({ [Object.keys(post.reactions).find(key => post.reactions[key] > 0)]: post.reactions[Object.keys(post.reactions).find(key => post.reactions[key] > 0)] }) : renderReactions(post.reactions);
+        const labels = isMobile ? renderLabels(post.labels.slice(0, 1)) : renderLabels(post.labels);
+
         return `
             ${titleHtml}
             <div class="card-content">${marked(post.body)}</div>
             <div class="card-footer">
                 <div class="card-footer-left">
-                    <span class="card-datetime">${formatDate(post.created_at)}</span>
-                    ${renderReactions(post.reactions)}
+                    <span class="card-datetime">${formatDate(post.created_at, !isMobile)}</span>
+                    ${reactions}
                 </div>
                 <div class="card-footer-right">
                     <span class="card-comments" onclick="router.navigate('/blog/${post.number}')">
                         💬 ${post.comments || 0}
                     </span>
-                    ${renderLabels(post.labels)}
+                    ${labels}
                     <a href="${post.html_url}" class="github-link" target="_blank">🔗</a>
                 </div>
             </div>
@@ -200,17 +204,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderReactions(reactions) {
-        const reactionHtml = Object.entries(reactions)
-            .filter(([_, count]) => count > 0)
-            .slice(0, 3)
-            .map(([reaction, count]) => `<span class="reaction">${getReactionEmoji(reaction)} ${count}</span>`)
+        const reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes'];
+        const reactionEmojis = { '👍': '+1', '👎': '-1', '😄': 'laugh', '🎉': 'hooray', '😕': 'confused', '❤️': 'heart', '🚀': 'rocket', '👀': 'eyes' };
+
+        const reactionHtml = reactionTypes
+            .filter(type => reactions[type] > 0)
+            .map(type => `
+                <button class="reaction" data-reaction="${type}">
+                    <span class="reaction-emoji">${Object.keys(reactionEmojis).find(key => reactionEmojis[key] === type)}</span>
+                    <span class="reaction-count">${reactions[type]}</span>
+                </button>
+            `)
             .join('');
+
         return `<div class="card-reactions">${reactionHtml}</div>`;
     }
 
     function renderLabels(labels) {
         return labels.map(label =>
-            `<span class="card-label" style="background-color: #${label.color}"><a href="/tag/${encodeURIComponent(label.name)}" data-navigo>${label.name}</a></span>`
+            `<span class="card-label" style="background-color: #${label.color}" title="${label.name}">
+                <a href="/tag/${encodeURIComponent(label.name)}" data-navigo>${label.name.length > 10 ? label.name.substring(0, 10) + '...' : label.name}</a>
+            </span>`
         ).join('');
     }
 
@@ -226,9 +240,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         `).join('');
     }
 
-    function formatDate(dateString) {
+    function formatDate(dateString, showYear = false) {
         const date = new Date(dateString);
-        return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        const options = showYear
+            ? { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }
+            : { hour: '2-digit', minute: '2-digit' };
+        return new Intl.DateTimeFormat('en-US', options).format(date);
     }
 
     function getLabelColor(labels) {
