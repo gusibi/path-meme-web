@@ -80,7 +80,7 @@ nav {
 .avatar {
     position: absolute;
     bottom: 20px;
-    left: calc((100% - var(--max-content-width)) / 2 + 15px);
+    left: calc((100% - var(--max-content-width)) / 2);
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -106,7 +106,7 @@ nav {
 
 .timeline-point {
     position: absolute;
-    left: 15px;
+    left: -45px;
     top: 20px;
     width: 30px;
     height: 30px;
@@ -166,6 +166,8 @@ nav {
 
 .card-footer-right {
     justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .card-reactions {
@@ -291,8 +293,9 @@ footer {
 }
 
 .comment-button:hover {
-    background-color: darken(var(--primary-color), 10%);
-    text-decoration: none;
+    background-color: darken(var(--primary-color), 60%);
+    text-decoration: underline;
+    color: var(--primary-color);
 }
 
 
@@ -331,8 +334,7 @@ footer {
     }
 
     .card-footer-left,
-    .card-footer-center,
-    .card-footer-right {
+    .card-footer-center {
         width: 100%;
         justify-content: flex-start;
         margin-bottom: 10px;

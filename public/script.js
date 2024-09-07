@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="card-content">${marked(post.body)}</div>
             <div class="card-footer">
                 <div class="card-footer-left">
-                    <span class="card-datetime">${formatDate(post.created_at, !isMobile)}</span>
+                    <span class="card-datetime">${formatDate(post.created_at, false)}</span>
                     ${reactions}
                 </div>
                 <div class="card-footer-right">
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="comment">
                 <div class="comment-header">
                     <span class="comment-author">${comment.user.login}</span>
-                    <span class="comment-date">${formatDate(comment.created_at)}</span>
+                    <span class="comment-date">${formatDate(comment.created_at, true)}</span>
                 </div>
                 <div class="comment-body">${marked(comment.body)}</div>
             </div>
