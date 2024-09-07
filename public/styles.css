@@ -6,6 +6,7 @@
     --footer-bg-color: #fff;
     --timeline-color: #ccc;
     --max-content-width: 800px;
+    --primary-color: #EC1C24;
 }
 
 body {
@@ -24,6 +25,15 @@ body.night-mode {
     --header-bg-color: #660D13;
     --footer-bg-color: #2a2a2a;
     --timeline-color: #555;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 header {
@@ -79,7 +89,7 @@ nav {
 
 .timeline {
     position: relative;
-    padding: 20px 0 20px 30px;
+    padding: 20px 0;
     margin: 0 auto;
     max-width: var(--max-content-width);
 }
@@ -99,15 +109,16 @@ nav {
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 30px;
+    margin-left: 45px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: relative;
 }
 
 .timeline-point {
     position: absolute;
-    left: -35px;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 1px;
+    top: 20px;
+    transform: translateX(-50%);
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -116,6 +127,8 @@ nav {
     align-items: center;
     color: #fff;
     font-weight: bold;
+    border: 2px solid white;
+    z-index: 1;
 }
 
 .card-datetime {
@@ -140,10 +153,20 @@ nav {
 }
 
 .card-footer-left,
+.card-footer-center,
 .card-footer-right {
     display: flex;
     align-items: center;
     gap: 15px;
+    flex: 1;
+}
+
+.card-footer-center {
+    justify-content: center;
+}
+
+.card-footer-right {
+    justify-content: flex-end;
 }
 
 .card-reactions {
@@ -152,13 +175,20 @@ nav {
 }
 
 .reaction {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 3px;
-    background-color: var(--bg-color);
-    padding: 2px 6px;
-    border-radius: 12px;
-    font-size: 0.8em;
+    padding: 3px 6px;
+    border-radius: 100px;
+    background-color: #f3f3f3;
+    border: 1px solid #d1d5da;
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.reaction-emoji {
+    margin-right: 3px;
 }
 
 .card-labels {
@@ -175,19 +205,11 @@ nav {
     transition: all 0.3s ease;
 }
 
-.card-label:hover {
-    opacity: 0.8;
-}
-
 .github-link {
     font-size: 1.2em;
     color: var(--text-color);
     text-decoration: none;
     transition: all 0.3s ease;
-}
-
-.github-link:hover {
-    opacity: 0.7;
 }
 
 footer {
@@ -204,7 +226,6 @@ footer {
 .site-info a {
     color: var(--text-color);
     margin: 0 10px;
-    text-decoration: none;
 }
 
 .design-by {
@@ -253,6 +274,28 @@ footer {
     left: calc((100% - var(--max-content-width)) / 2 + 40px);
 }
 
+.post-detail img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.comment-button {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.comment-button:hover {
+    background-color: darken(var(--primary-color), 10%);
+    text-decoration: none;
+}
+
 @media (max-width: 768px) {
     .avatar {
         left: 30px;
@@ -268,22 +311,27 @@ footer {
     }
 
     .card-footer {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .card-footer-left,
-    .card-footer-right {
-        width: 100%;
-        justify-content: space-between;
-        margin-bottom: 10px;
-    }
-
-    .card-labels {
         flex-wrap: wrap;
     }
 
+    .card-footer-left,
+    .card-footer-center,
+    .card-footer-right {
+        width: 100%;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .card-reactions {
+        display: none;
+    }
+
+    .card-labels {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
     .card-label {
-        margin-bottom: 5px;
+        flex-shrink: 0;
     }
 }
