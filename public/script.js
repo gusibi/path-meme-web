@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load a single blog post
     async function loadBlogPost(postId) {
         try {
-            const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts/${postId}`);
+            const response = await fetch(`https://path-memo-api.gusibi.mobi/api/blog-posts/${postId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load blog posts by tag
     async function loadBlogPostsByTag(tagName, timeline) {
         try {
-            const response = await fetch(`https://path-momo-api.gusibi.workers.dev/api/blog-posts?tag=${encodeURIComponent(tagName)}`);
+            const response = await fetch(`https://path-memo-api.gusibi.mobi/api/blog-posts?tag=${encodeURIComponent(tagName)}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
