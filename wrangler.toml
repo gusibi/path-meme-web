@@ -1,0 +1,10 @@
+# wrangler.toml
+name = "path-style-blog"
+type = "javascript"
+account_id = "your-account-id"
+workers_dev = true
+
+[env.production]
+workers_dev = false
+#route = "your-domain.com/*"
+#zone_id = "your-zone-id"
