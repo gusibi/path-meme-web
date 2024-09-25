@@ -110,4 +110,7 @@ export default {
   // Ensure _layers is defined as an array
   _layers: [],
 
+  nitro: {
+    preset: 'cloudflare-pages'
+  }
 }
