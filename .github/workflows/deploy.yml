@@ -1,22 +1,42 @@
-name: Deploy to Cloudflare Workers
-
+name: Deploy
 on:
   push:
-    branches:
-      - main
+    branches: main
+  pull_request:
+    branches: main
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write # Needed for auth with Deno Deploy
+      contents: read # Needed to clone the repository
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Clone repository
+        uses: actions/checkout@v4
 
-    - name: Install Wrangler
-      run: npm install -g @cloudflare/wrangler
+      - name: Install Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
 
-    - name: Publish to Cloudflare Workers
-      run: wrangler publish
-      env:
-        CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install step
+        run: "npm install"
+
+      - name: Build step
+        run: "NITRO_PRESET=deno-deploy npm run build"
+
+      - name: Upload to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: "gusibi-path-meme-web"
+          entrypoint: "server/index.ts"
+          root: ".output"
