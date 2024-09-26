@@ -1,5 +1,4 @@
-const colors = require('tailwindcss/colors')
-
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./components/**/*.{js,vue,ts}",
@@ -9,7 +8,6 @@ module.exports = {
     "./nuxt.config.{js,ts}",
     "./app.vue",
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -39,17 +37,6 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/typography'),
-    function ({ addUtilities }) {
-      const newUtilities = {
-        '.hover\\:bg-primary:hover': {
-          backgroundColor: '#EC1C24',
-        },
-        '.hover\\:bg-secondary:hover': {
-          backgroundColor: '#660D13',
-        },
-        // 可以根据需要添加更多
-      }
-      addUtilities(newUtilities, ['responsive', 'hover'])
-    }
   ],
+  darkMode: 'class',
 }

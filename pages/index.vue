@@ -3,26 +3,21 @@
     <Timeline :blogPosts="blogPosts" />
   </div>
 </template>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useBannerContent } from '~/composables/useBannerContent'
 
-<script>
-import { mapState, mapActions } from 'vuex';
-import Timeline from '~/components/Timeline.vue';
+const blogPosts = ref([])
+const { setBannerContent } = useBannerContent()
 
-export default {
-  components: {
-    Timeline
-  },
-  computed: {
-    ...mapState(['blogPosts']),
-  },
-  mounted() {
-    this.loadBlogPosts();
-  },
-  methods: {
-    ...mapActions(['loadBlogPosts'])
-  },
-  created() {
-    this.$setBannerContent(''); // 或者设置为默认的 banner 内容
+onMounted(async () => {
+  const config = useRuntimeConfig()
+  try {
+    blogPosts.value = await $fetch(`${config.public.apiBaseUrl}/api/blog-posts`)
+    setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">Welcome to My Blog</h1>')
+  } catch (error) {
+    console.error('Error fetching blog posts:', error)
+    blogPosts.value = []
   }
-}
+})
 </script>

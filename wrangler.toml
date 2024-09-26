@@ -1,10 +1,7 @@
-# wrangler.toml
-name = "path-style-blog"
-type = "javascript"
-account_id = "your-account-id"
+name = "path-momo-web"
+main = "./.output/server/index.mjs"
 workers_dev = true
+compatibility_date = "2023-09-01"
 
-[env.production]
-workers_dev = false
-#route = "your-domain.com/*"
-#zone_id = "your-zone-id"
+[site]
+bucket = ".output/public"
