@@ -111,6 +111,6 @@ export default {
   _layers: [],
 
   nitro: {
-    preset: 'cloudflare-pages'
+    preset: 'deno_deploy'
   }
 }
