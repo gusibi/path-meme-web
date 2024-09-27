@@ -7,11 +7,14 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "deploy": "nuxt build && wrangler pages deploy .output/public"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.4",
+    "@stefanobartoletti/nuxt-social-share": "^1.1.1",
     "@tailwindcss/typography": "^0.5.15",
+    "html-to-image": "^1.11.11",
     "marked": "^14.1.2",
     "nuxt": "^3.13.0",
     "vue": "latest",

@@ -3,21 +3,20 @@
     <Timeline :blogPosts="blogPosts" />
   </div>
 </template>
+
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useBannerContent } from '~/composables/useBannerContent'
 
 const blogPosts = ref([])
 const { setBannerContent } = useBannerContent()
 
-onMounted(async () => {
-  const config = useRuntimeConfig()
-  try {
-    blogPosts.value = await $fetch(`${config.public.apiBaseUrl}/api/blog-posts`)
-    setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">Welcome to My Blog</h1>')
-  } catch (error) {
-    console.error('Error fetching blog posts:', error)
-    blogPosts.value = []
-  }
-})
+// 使用 useAsyncData 来获取数据
+const { data: fetchedBlogPosts } = await useAsyncData('blogPosts', () => $fetch('/api/blog-posts'))
+
+// 当数据获取完成后，更新 blogPosts
+blogPosts.value = fetchedBlogPosts.value || []
+
+// 设置 banner 内容
+setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">Welcome to My Blog</h1>')
 </script>

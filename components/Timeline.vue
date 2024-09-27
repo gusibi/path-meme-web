@@ -7,33 +7,52 @@
             {{ getFirstLabelChar(post.labels) }}
           </span>
         </div>
-        <div class="flex-grow bg-card-light dark:bg-card-dark rounded-lg px-6 py-8 shadow-xl">
-          <h3 class="text-xl font-medium">
-            <NuxtLink :to="`/blog/${post.number}`" class="hover:underline">{{ post.title }}</NuxtLink>
-          </h3>
-          <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(post.body)"></div>
-          <div class="mt-4 flex justify-between items-center text-sm">
+        <div class="flex-grow bg-card-light dark:bg-card-dark rounded-lg px-6  shadow-xl">
+          <div class="px-6 pt-4 flex justify-between items-center text-sm">
+            <!-- 左上角标签 -->
             <div class="flex items-center space-x-4">
-              <span class="text-gray-500 dark:text-gray-400">{{ formatDate(post.created_at, false) }}</span>
               <div v-html="renderReactions(post.reactions)"></div>
             </div>
+            <!-- 右上角反应 -->
             <div class="flex items-center space-x-4">
-              <NuxtLink class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :to="`/blog/${post.number}`">💬 {{ post.comments || 0 }}</NuxtLink>
-              <span v-for="label in renderLabels(post.labels)" :key="label.name" class="card-label inline-block text-white dark:text-slate-800 rounded-full px-2 py-1 text-xs font-semibold mr-2" :style="{ backgroundColor: label.color }">
+              <span v-for=" label in renderLabels(post.labels)" :key="label.name" class="card-label inline-block text-white dark:text-slate-800 px-2 py-1 text-sm font-semibold" :style="{ color: label.color }">
                 <NuxtLink :to="`/tag/${encodeURIComponent(label.name)}`" class="hover:underline">
                   {{ label.displayName }}
                 </NuxtLink>
               </span>
+            </div>
+          </div>
+          <div class="px-6 py-4">
+            <h3 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
+              <NuxtLink :to="`/blog/${post.number}`" class="hover:underline">{{ post.title }}</NuxtLink>
+            </h3>
+            <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(post.body)"></div>
+          </div>
+          <!-- 底部信息栏 -->
+          <div class="px-6 py-3 flex justify-between items-center text-sm">
+            <!-- 左下角 GitHub 链接 -->
+            <div class="flex items-center space-x-4">
               <a class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :href="post.html_url" target="_blank">🔗</a>
+              <span class="text-gray-500 dark:text-gray-400">{{ formatDate(post.created_at, false) }}</span>
+            </div>
+            <div class="flex items-center space-x-4">
+              <NuxtLink class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :to="`/blog/${post.number}`">💬 {{ post.comments || 0 }}</NuxtLink>
+              <!-- <button @click="openShareModal(post)" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"> 🔗 Share </button> -->
+              <!-- 右下角分享按钮 -->
+              <!-- <button @click="sharePost(post)" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+              🔗 Share
+            </button> -->
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- <ShareModal :post="selectedPost" :is-open="isShareModalOpen" @close="closeShareModal" /> -->
 </template>
 <script setup lang="ts">
-import { PropType } from 'vue'
+import { ref } from 'vue'
+// import ShareModal from '~/components/ShareModal.vue'
 
 interface BlogPost {
   id: number
@@ -50,9 +69,23 @@ interface BlogPost {
 const props = defineProps({
   blogPosts: {
     type: Array as PropType<BlogPost[]>,
-    required: true
+    required: true,
+    default: () => []  // 添加默认值
   }
 })
+
+const selectedPost = ref<BlogPost | null>(null)
+const isShareModalOpen = ref(false)
+
+const openShareModal = (post: BlogPost) => {
+  selectedPost.value = post
+  isShareModalOpen.value = true
+}
+
+const closeShareModal = () => {
+  isShareModalOpen.value = false
+  selectedPost.value = null
+}
 
 const formatDate = (dateString: string, showYear = false) => {
   const date = new Date(dateString)
@@ -70,8 +103,9 @@ const formatDate = (dateString: string, showYear = false) => {
 }
 
 const renderReactions = (reactions: Record<string, number>) => {
-  const reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes']
-  const reactionEmojis: Record<string, string> = { '👍': '+1', '👎': '-1', '😄': 'laugh', '🎉': 'hooray', '😕': 'confused', '❤️': 'heart', '🚀': 'rocket', '👀': 'eyes' }
+  const reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes', 'default']
+  const reactionEmojis: Record<string, string> = { '👍': '+1', '👎': '-1', '😄': 'laugh', '🎉': 'hooray', '😕': 'confused', '❤️': 'heart', '🚀': 'rocket', '👀': 'eyes', '️💔': 'default' }
+  reactions['default'] = 1
 
   const reactionHtml = reactionTypes
     .filter(type => reactions[type] > 0)
@@ -101,4 +135,10 @@ const getLabelColor = (labels: Array<{ color: string }>) => {
 const getFirstLabelChar = (labels: Array<{ name: string }>) => {
   return labels.length > 0 ? labels[0].name.charAt(0) : '•'
 }
+
+const isMemePost = (labels: Array<{ name: string }>): boolean => {
+  return labels.some(label => label.name.toLowerCase() === 'meme')
+}
+
+
 </script>
