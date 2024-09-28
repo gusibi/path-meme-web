@@ -30,6 +30,7 @@ export default defineNuxtConfig({
 
   plugins: [
     '~/plugins/marked.ts',
+    '~/plugins/head.ts',
     '~/plugins/banner-content.ts'
   ],
 

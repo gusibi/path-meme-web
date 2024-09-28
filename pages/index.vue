@@ -3,7 +3,6 @@
     <Timeline :blogPosts="blogPosts" />
   </div>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useBannerContent } from '~/composables/useBannerContent'
