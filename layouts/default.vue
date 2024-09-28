@@ -22,7 +22,8 @@
       <div class="max-w-content mx-auto px-4 text-center">
         <div class="mb-2">
           <a href="https://momo.gusibi.mobi" class="mr-4 hover:underline">本站地址</a>
-          <a href="/rss.xml" class="hover:underline">RSS</a>
+          <a href="/api/rss.xml" class="mr-4 hover:underline">RSS</a>
+          <a href="/sitemap.xml" class="mr-4 hover:underline">SiteMap</a>
         </div>
         <div class="text-sm text-gray-500">Design by <a href="https://github.com/gusibi/path-meme-web">gusibi@path-meme</a></div>
       </div>

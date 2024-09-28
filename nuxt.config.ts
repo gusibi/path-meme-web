@@ -1,11 +1,16 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  site: {
+    url: 'https://momo.gusibi.mobi',
+    name: '古思乱讲'
+  },
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
     '@stefanobartoletti/nuxt-social-share',
+    '@nuxtjs/sitemap',
   ],
 
   // configuration options
@@ -34,7 +39,17 @@ export default defineNuxtConfig({
       siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi'
     }
   },
-
+  // Sitemap configuration
+  sitemap: {
+    // hostname: 'https://momo.gusibi.mobi',
+    // gzip: true,
+    exclude: [
+      '/admin/**'
+    ],
+    sources: [
+      '/api/__sitemap__/urls'
+    ]
+  },
   nitro: {
     preset: 'cloudflare-pages'
   },

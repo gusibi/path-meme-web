@@ -16,7 +16,7 @@
                         <span class="text-gray-500 dark:text-gray-400">{{ formatDate(post.created_at, false) }}</span>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <CommentButton :post-number="post.number" :comment-count="commentCount(post.comments)" />
+                        <CommentButton :post-number="post.number" :comment-count="getCommentCount(post.comments)" />
                         <ShareButton :post="post" :card-selector="`[data-post-id='${post.number}']`" />
                     </div>
                 </div>
@@ -56,14 +56,13 @@ const formatDate = (dateString: string, showYear = false) => {
     return new Intl.DateTimeFormat('en-US', options).format(date)
 }
 
-const commentCount = (comments: Array<{
+const getCommentCount = (comments: Array<{
     id: number
     user: { login: string }
     created_at: string
     body: string
-}>) => {
-
-    if (comments.length > 0) {
+}> | undefined): number => {
+    if (comments && comments.length > 0) {
         return comments.length
     }
     return 0

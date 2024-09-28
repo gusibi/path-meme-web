@@ -28,7 +28,7 @@ const previewImage = ref('')
 const mobilePreviewRef = ref(null)
 
 onMounted(() => {
-    console.log('ShareButton mounted, post data:', props.post)
+    // console.log('ShareButton mounted, post data:', props.post)
 })
 
 const generatePreview = async () => {

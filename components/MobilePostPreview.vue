@@ -15,7 +15,7 @@
                 <div class="prose dark:prose-invert max-w-none mb-4" v-html="$md(post.body || 'No Content')"></div>
                 <div class="flex justify-between items-center">
                     <PostReactions :reactions="post.reactions" class="" />
-                    <CommentButton :post-number="post.number" :comment-count="post.comments || 0" />
+                    <CommentButton :post-number="post.number" :comment-count="getCommentCount(post.comments) || 0" />
                 </div>
             </div>
         </div>
@@ -49,7 +49,7 @@ const isMemePost = (labels: Array<{ name: string }>): boolean => {
 }
 
 onMounted(() => {
-    console.log('MobilePostPreview mounted, post data:', props.post)
+    // console.log('MobilePostPreview mounted, post data:', props.post)
 })
 
 watch(() => props.post, (newValue) => {
@@ -61,6 +61,19 @@ const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
+
+const getCommentCount = (comments: Array<{
+    id: number
+    user: { login: string }
+    created_at: string
+    body: string
+}> | undefined): number => {
+    if (comments && comments.length > 0) {
+        return comments.length
+    }
+    return 0
+}
+
 
 defineExpose({ mobilePreview })
 </script>
