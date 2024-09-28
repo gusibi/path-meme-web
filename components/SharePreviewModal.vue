@@ -2,20 +2,23 @@
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md h-full flex flex-col">
       <div class="flex-grow overflow-y-auto p-4">
-        <img :src="previewImage" alt="Preview" class="w-full rounded-lg" />
+        <img :src="previewImage" alt="Preview" class="w-full rounded-lg shadow-lg" />
       </div>
-      <div class="p-4 border-t">
-        <div class="flex flex-wrap justify-between items-center">
-          <div class="space-x-2 mb-2">
-            <button @click="shareToTwitter" class="bg-blue-400 text-white px-4 py-2 rounded">Twitter</button>
-            <button @click="shareToFacebook" class="bg-blue-600 text-white px-4 py-2 rounded">Facebook</button>
-            <button @click="shareToLinkedIn" class="bg-blue-700 text-white px-4 py-2 rounded">LinkedIn</button>
+      <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Share or Download</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Share to:</h4>
+            <div class="flex space-x-2">
+              <SocialShare v-for="network in ['facebook', 'twitter', 'linkedin', 'email']" :key="network" :network="network" :styled="true" :label="false" class="p-2 rounded" />
+            </div>
           </div>
-          <div class="space-x-2">
-            <button @click="downloadImage" class="bg-green-500 text-white px-4 py-2 rounded">Download</button>
-            <button @click="$emit('close')" class="bg-red-500 text-white px-4 py-2 rounded">Close</button>
+          <div>
+            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Download:</h4>
+            <button @click="downloadImage" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded transition duration-300"> Download Image </button>
           </div>
         </div>
+        <button @click="$emit('close')" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded transition duration-300"> Close </button>
       </div>
     </div>
   </div>

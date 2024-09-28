@@ -18,6 +18,7 @@
     "html2canvas": "^1.4.1",
     "marked": "^14.1.2",
     "nuxt": "^3.13.0",
+    "qrcode.vue": "^3.5.0",
     "twemoji": "^14.0.2",
     "vue": "latest",
     "vue-router": "latest"

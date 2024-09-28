@@ -12,7 +12,7 @@
 </template>
 <script setup lang="ts">
 import { defineProps, ref, nextTick, onMounted } from 'vue'
-import html2canvas from 'html2canvas'
+import { toPng } from 'html-to-image'
 import SharePreviewModal from './SharePreviewModal.vue'
 import MobilePostPreview from './MobilePostPreview.vue'
 
@@ -42,43 +42,45 @@ const generatePreview = async () => {
         // Wait for the next DOM update cycle
         await nextTick()
 
-        const mobilePreviewElement = mobilePreviewRef.value.$el
+        const mobilePreviewElement = mobilePreviewRef.value.mobilePreview
 
         if (!mobilePreviewElement) {
             console.error("Mobile preview element is null")
             return
         }
 
-        // Force the mobile preview to be visible for html2canvas
+        // Force the mobile preview to be visible for html-to-image
         mobilePreviewElement.style.display = 'block'
-        mobilePreviewElement.style.position = 'absolute'
-        mobilePreviewElement.style.top = '-9999px'
-        mobilePreviewElement.style.left = '-9999px'
+        mobilePreviewElement.style.position = 'fixed'
+        mobilePreviewElement.style.top = '0'
+        mobilePreviewElement.style.left = '0'
+        mobilePreviewElement.style.zIndex = '-1000'
 
-        // Wait for any images to load
+        // Wait for any images to load and for the component to be fully rendered
         await new Promise(resolve => setTimeout(resolve, 1000))
 
-        const canvas = await html2canvas(mobilePreviewElement, {
-            backgroundColor: null,
-            scale: 4, // Increase scale for better quality
-            width: 390, // iPhone width
+        const dataUrl = await toPng(mobilePreviewElement, {
+            backgroundColor: '#ffffff',
+            width: 390,
             height: mobilePreviewElement.scrollHeight,
-            logging: true, // Enable logging for html2canvas
+            pixelRatio: 2,
+            quality: 1,
+            cacheBust: true,
         })
 
-
-        previewImage.value = canvas.toDataURL('image/png')
+        previewImage.value = dataUrl
 
         // Hide the mobile preview again
         mobilePreviewElement.style.display = 'none'
         mobilePreviewElement.style.position = 'static'
+        mobilePreviewElement.style.zIndex = 'auto'
 
         isPreviewOpen.value = true
+        console.log('Preview generated successfully')
     } catch (error) {
         console.error("Error during image generation:", error)
     }
 }
-
 const closePreview = () => {
     isPreviewOpen.value = false
 }

@@ -11,22 +11,24 @@
                         <PostLabels :labels="post.labels" />
                     </div>
                 </div>
-                <!-- <div class="prose dark:prose-invert max-w-none" v-html="$md(post.body)" /> -->
                 <div class="prose dark:prose-invert max-w-none mb-4" v-html="$md(post.body || 'No Content')"></div>
                 <div class="flex justify-between items-center">
-                    <!-- <div class="flex flex-wrap gap-2">
-                        <PostReactions :reactions="post.reactions" />
-                    </div> -->
-                    <div class="text-sm text-gray-600 dark:text-gray-400"> 💬 {{ post.comments || 0 }}
-                    </div>
+                    <PostReactions :reactions="post.reactions" class="" />
+                    <CommentButton :post-number="post.number" :comment-count="post.comments || 0" />
                 </div>
             </div>
         </div>
-        <div class="justify-center pb-6 text-sm text-gray-600 dark:text-gray-400 shadow-md">古思乱讲: https://momo.gusibi.mobi </div>
+        <div class="justify-center text-center p-2 text-sm text-gray-600 dark:text-gray-400">古思乱讲: https://momo.gusibi.mobi </div>
+        <div class="flex flex-col items-center">
+            <QRCode :value="postUrl" :size="60" level="M" render-as="svg" :margin="0" class="rounded-md overflow-hidden" />
+        </div>
     </div>
 </template>
 <script setup lang="ts">
-import { defineProps, ref, onMounted, watch } from 'vue'
+import { defineProps, ref, onMounted, watch, computed } from 'vue'
+import QRCode from 'qrcode.vue'
+import { useRuntimeConfig } from '#app'
+const config = useRuntimeConfig()
 
 const props = defineProps({
     post: {
@@ -36,6 +38,11 @@ const props = defineProps({
 })
 
 const mobilePreview = ref(null)
+
+const postUrl = computed(() => {
+    return `${config.public.siteUrl}/blog/${props.post.number}`
+})
+
 
 onMounted(() => {
     console.log('MobilePostPreview mounted, post data:', props.post)
@@ -51,16 +58,7 @@ const formatDate = (dateString: string) => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
-const getContrastColor = (hexcolor: string) => {
-    if (!hexcolor) return 'black'
-    const r = parseInt(hexcolor.substr(0, 2), 16)
-    const g = parseInt(hexcolor.substr(2, 2), 16)
-    const b = parseInt(hexcolor.substr(4, 2), 16)
-    const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
-    return (yiq >= 128) ? 'black' : 'white'
-}
-
-defineExpose({ $el: mobilePreview })
+defineExpose({ mobilePreview })
 </script>
 <style scoped>
 .mobile-preview {

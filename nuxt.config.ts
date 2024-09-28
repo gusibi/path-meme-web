@@ -7,6 +7,14 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@stefanobartoletti/nuxt-social-share',
   ],
+
+  // configuration options
+  socialShare: {
+    baseUrl: 'https://momo.gusibi.mobi' // required!
+    // other optional module options
+  },
+
+
   tailwindcss: {
     cssPath: ["~/assets/css/tailwind.css", { injectPosition: 0 }],
     configPath: 'tailwind.config.js',
@@ -22,7 +30,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi'
+      apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi',
+      siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi'
     }
   },
 

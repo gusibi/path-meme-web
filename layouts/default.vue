@@ -24,7 +24,7 @@
           <a href="https://momo.gusibi.mobi" class="mr-4 hover:underline">本站地址</a>
           <a href="/rss.xml" class="hover:underline">RSS</a>
         </div>
-        <div class="text-sm text-gray-500">Design by gusibi@path-meme</div>
+        <div class="text-sm text-gray-500">Design by <a href="https://github.com/gusibi/path-meme-web">gusibi@path-meme</a></div>
       </div>
     </footer>
     <div ref="floatingTimeLabel" class="fixed top-5 right-5 bg-black bg-opacity-70 text-white px-4 py-2 rounded-full text-sm opacity-0 transition-opacity duration-300"></div>
