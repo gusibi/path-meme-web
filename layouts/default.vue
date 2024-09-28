@@ -2,14 +2,16 @@
   <div class="min-h-screen flex flex-col bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
     <header class="bg-primary dark:bg-secondary">
       <nav class="max-w-content mx-auto px-4 py-2 flex justify-between items-center">
-        <div class="text-white dark:text-white text-xl font-bold cursor-pointer" @click="navigateToHome">古思乱讲</div>
+        <div class="flex items-center cursor-pointer" @click="navigateToHome">
+          <img class="w-8 h-8 rounded-full mr-2" src="https://avatars.githubusercontent.com/u/1282277?v=4" alt="Avatar" />
+          <div class="text-white dark:text-white text-xl font-bold">古思乱讲</div>
+        </div>
         <button class="text-primary dark:text-white text-2xl" @click="toggleNightMode">{{ nightModeIcon }}</button>
       </nav>
     </header>
     <div class="relative h-64 overflow-hidden">
       <img class="w-full h-full object-cover" src="/banner2.jpeg" alt="Banner" />
-      <img class="absolute bottom-4 left-4 w-16 h-16 rounded-full border-2 border-white" src="https://avatars.githubusercontent.com/u/1282277?v=4" alt="Avatar" />
-      <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="absolute inset-0 flex items-center justify-center dark:bg-black dark:bg-opacity-50">
         <div v-html="bannerContent"></div>
       </div>
     </div>

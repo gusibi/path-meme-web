@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
     try {
         // 使用配置中的 API 基础 URL
-        const response = await $fetch(`${config.public.apiBaseUrl}/api/blog-posts/${id}`)
+        const response = await fetch(`${config.public.apiBaseUrl}/api/blog-posts/${id}`)
 
         if (!response.ok) {
             throw createError({

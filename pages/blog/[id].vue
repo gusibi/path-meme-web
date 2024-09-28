@@ -1,14 +1,25 @@
 <template>
-    <main class="container max-w-content mx-auto px-4 py-8">
+    <main class="container max-w-content mx-auto px-4 ">
         <article v-if="post" class="bg-card-light dark:bg-card-dark rounded-lg shadow-xl overflow-hidden">
-            <div class="px-6 py-8">
+            <div class="px-6 py-6">
                 <h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{{ post.title }}</h1>
-                <div class="mb-4 flex items-center text-sm text-gray-600 dark:text-gray-400">
-                    <span class="mr-4">{{ formatDate(post.created_at, true) }}</span>
+                <div class="mb-4 flex justify-center items-center text-sm text-gray-600 dark:text-gray-400">
                     <PostLabels :labels="post.labels" />
                 </div>
                 <div class="prose dark:prose-invert max-w-none" v-html="$md(post.body)" />
-                <PostReactions :reactions="post.reactions" class="mt-6" />
+                <!-- 底部信息栏 -->
+                <div class=" pt-3 flex justify-between items-center text-sm">
+                    <!-- 左下角 GitHub 链接 -->
+                    <div class="flex items-center space-x-4">
+                        <a class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :href="post.html_url" target="_blank">🔗</a>
+                        <PostReactions :reactions="post.reactions" />
+                        <span class="text-gray-500 dark:text-gray-400">{{ formatDate(post.created_at, false) }}</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <CommentButton :post-number="post.number" :comment-count="commentCount(post.comments)" />
+                        <ShareButton :post="post" :card-selector="`[data-post-id='${post.number}']`" />
+                    </div>
+                </div>
             </div>
         </article>
         <div v-if="post" class="mt-8">
@@ -44,6 +55,20 @@ const formatDate = (dateString: string, showYear = false) => {
     }
     return new Intl.DateTimeFormat('en-US', options).format(date)
 }
+
+const commentCount = (comments: Array<{
+    id: number
+    user: { login: string }
+    created_at: string
+    body: string
+}>) => {
+
+    if (comments.length > 0) {
+        return comments.length
+    }
+    return 0
+}
+
 
 if (post.value) {
     setBannerContent(`<h1 class="text-4xl font-extrabold text-center text-white mb-6">${post.value.title}</h1>`)

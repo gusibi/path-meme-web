@@ -2,46 +2,38 @@
   <div class="container max-w-content mx-auto px-4">
     <div class="space-y-8">
       <div v-for="post in blogPosts" :key="post.id" class="flex items-start">
-        <div class="flex-shrink-0 mr-4">
+        <!-- <div class="flex-shrink-0 mr-4">
           <span class="inline-flex items-center justify-center w-8 h-8 rounded-full text-white" :style="{ backgroundColor: getLabelColor(post.labels) }">
             {{ getFirstLabelChar(post.labels) }}
           </span>
-        </div>
-        <div class="flex-grow bg-card-light dark:bg-card-dark rounded-lg px-6  shadow-xl">
-          <div class="px-6 pt-4 flex justify-between items-center text-sm">
+        </div> -->
+        <div class="flex-grow bg-card-light dark:bg-card-dark rounded-lg px-6 shadow-xl" :data-post-id="post.number">
+          <div class="pt-4 flex justify-between items-center text-sm">
             <!-- 左上角标签 -->
             <div class="flex items-center space-x-4">
-              <div v-html="renderReactions(post.reactions)"></div>
+              <PostLabels :labels="post.labels" />
             </div>
             <!-- 右上角反应 -->
             <div class="flex items-center space-x-4">
-              <span v-for=" label in renderLabels(post.labels)" :key="label.name" class="card-label inline-block text-white dark:text-slate-800 px-2 py-1 text-sm font-semibold" :style="{ color: label.color }">
-                <NuxtLink :to="`/tag/${encodeURIComponent(label.name)}`" class="hover:underline">
-                  {{ label.displayName }}
-                </NuxtLink>
-              </span>
+              <PostReactions :reactions="post.reactions" class="" />
             </div>
           </div>
-          <div class="px-6 py-4">
+          <div class="py-3">
             <h3 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
               <NuxtLink :to="`/blog/${post.number}`" class="hover:underline">{{ post.title }}</NuxtLink>
             </h3>
             <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(post.body)"></div>
           </div>
           <!-- 底部信息栏 -->
-          <div class="px-6 py-3 flex justify-between items-center text-sm">
+          <div class="pb-6 pt-3 flex justify-between items-center text-sm">
             <!-- 左下角 GitHub 链接 -->
             <div class="flex items-center space-x-4">
               <a class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :href="post.html_url" target="_blank">🔗</a>
               <span class="text-gray-500 dark:text-gray-400">{{ formatDate(post.created_at, false) }}</span>
             </div>
             <div class="flex items-center space-x-4">
-              <NuxtLink class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :to="`/blog/${post.number}`">💬 {{ post.comments || 0 }}</NuxtLink>
-              <!-- <button @click="openShareModal(post)" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"> 🔗 Share </button> -->
-              <!-- 右下角分享按钮 -->
-              <!-- <button @click="sharePost(post)" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
-              🔗 Share
-            </button> -->
+              <CommentButton :post-number="post.number" :comment-count="post.comments || 0" />
+              <ShareButton :post="post" :card-selector="`[data-post-id='${post.number}']`" />
             </div>
           </div>
         </div>
@@ -52,7 +44,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-// import ShareModal from '~/components/ShareModal.vue'
+import ShareModal from '~/components/ShareButton.vue'
 
 interface BlogPost {
   id: number
@@ -102,23 +94,6 @@ const formatDate = (dateString: string, showYear = false) => {
   }
 }
 
-const renderReactions = (reactions: Record<string, number>) => {
-  const reactionTypes = ['+1', '-1', 'laugh', 'hooray', 'confused', 'heart', 'rocket', 'eyes', 'default']
-  const reactionEmojis: Record<string, string> = { '👍': '+1', '👎': '-1', '😄': 'laugh', '🎉': 'hooray', '😕': 'confused', '❤️': 'heart', '🚀': 'rocket', '👀': 'eyes', '️💔': 'default' }
-  reactions['default'] = 1
-
-  const reactionHtml = reactionTypes
-    .filter(type => reactions[type] > 0)
-    .map(type => `
-      <button class="reaction inline-flex items-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full px-2 py-1 text-xs font-semibold mr-2" data-reaction="${type}">
-        <span class="reaction-emoji mr-1">${Object.keys(reactionEmojis).find(key => reactionEmojis[key] === type)}</span>
-        <span class="reaction-count">${reactions[type]}</span>
-      </button>
-    `)
-    .join('')
-
-  return `<div class="card-reactions flex space-x-2">${reactionHtml}</div>`
-}
 
 const renderLabels = (labels: Array<{ color: string; name: string }>) => {
   return labels.map(label => ({
