@@ -11,6 +11,7 @@
     "deploy": "nuxt build && wrangler pages deploy .output/public"
   },
   "dependencies": {
+    "@auth0/auth0-vue": "^2.3.3",
     "@nuxtjs/sitemap": "^6.1.1",
     "@pinia/nuxt": "^0.5.4",
     "@stefanobartoletti/nuxt-social-share": "^1.1.1",

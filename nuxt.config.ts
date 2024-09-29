@@ -31,11 +31,16 @@ export default defineNuxtConfig({
   plugins: [
     '~/plugins/marked.ts',
     '~/plugins/head.ts',
-    '~/plugins/banner-content.ts'
+    '~/plugins/banner-content.ts',
+    { src: '~/plugins/auth0.client.ts', mode: 'client' }
   ],
 
   runtimeConfig: {
     public: {
+      auth0: {
+        domain: process.env.AUTH0_DOMAIN,
+        clientId: process.env.AUTH0_CLIENT_ID,
+      },
       apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi',
       siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi'
     }
