@@ -13,7 +13,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSupabaseUser, useSupabaseClient } from '#imports'
 
@@ -28,10 +28,11 @@ const handleGitHubLogin = async () => {
     const { data, error: loginError } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/confirm`
+        redirectTo: `${window.location.origin}/auth/confirm`
       }
     })
     if (loginError) throw loginError
+    console.log('Login initiated:', data)
   } catch (e) {
     console.error('Login error:', e)
     error.value = e.message || 'An error occurred during login'
@@ -39,9 +40,14 @@ const handleGitHubLogin = async () => {
 }
 
 onMounted(() => {
-  // 如果用户已登录，重定向到主页
-  if (user.value) {
-    router.push('/')
-  }
+  console.log('Login page mounted')
+  // 监听用户状态变化
+  watch(user, (newUser) => {
+    console.log('User state in login page changed:', newUser)
+    if (newUser) {
+      console.log('User logged in, redirecting')
+      router.push('/')
+    }
+  }, { immediate: true })
 })
 </script>

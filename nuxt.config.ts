@@ -4,6 +4,7 @@ export default defineNuxtConfig({
     url: 'https://momo.gusibi.mobi',
     name: '古思乱讲'
   },
+  ssr: false,
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   modules: [
@@ -34,7 +35,21 @@ export default defineNuxtConfig({
     '~/plugins/head.ts',
     '~/plugins/banner-content.ts',
   ],
-
+  routeRules: {
+    // 指定只有 /profile 路由需要身份验证
+    '/profile': { auth: true },
+  },
+  // 确保中间件被加载
+  hooks: {
+    'pages:extend'(pages) {
+      pages.forEach((page) => {
+        if (page.path === '/profile') {
+          page.meta = page.meta || {}
+          page.meta.middleware = ['auth']
+        }
+      })
+    }
+  },
   runtimeConfig: {
     public: {
       supabase: {
@@ -44,6 +59,13 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi',
       siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi'
     }
+  },
+  supabase: {
+    // Options
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+    serviceKey: process.env.SUPABASE_SERVICE_KEY,
+    redirect: false, // Redirect automatically to the configured login page if a non authenticated user is trying to access a guarded. You can disable all redirects by setting this option to false.
   },
   // Sitemap configuration
   sitemap: {

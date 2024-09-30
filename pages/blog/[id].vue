@@ -24,6 +24,8 @@
         </article>
         <div v-if="post" class="mt-8">
             <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Comments</h3>
+            <!-- 使用 CommentBox 组件 -->
+            <CommentBox @comment-submitted="handleCommentSubmission" />
             <div v-if="post.comments && post.comments.length > 0">
                 <PostComment v-for="comment in post.comments" :key="comment.id" :comment="comment" />
             </div>
@@ -31,11 +33,6 @@
         </div>
         <NuxtLink v-if="post" :to="post.html_url" target="_blank" class="mt-6 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"> Comment on GitHub </NuxtLink>
     </main>
-    <!-- 如果用户已登录，显示用户信息 -->
-    <div v-if="user">
-        <h2>User Info</h2>
-        <pre>{{ JSON.stringify(user, null, 2) }}</pre>
-    </div>
 </template>
 <script setup lang="ts">
 import { useAsyncData } from '#app'
@@ -75,7 +72,12 @@ const getCommentCount = (comments: Array<{
     }
     return 0
 }
-
+const handleCommentSubmission = async (commentText: string) => {
+    // 实现提交评论的逻辑
+    console.log('Submitting comment:', commentText)
+    // 这里应该调用 API 来保存评论
+    // 保存成功后，可能需要刷新评论列表
+}
 
 if (post.value) {
     setBannerContent(`<h1 class="text-4xl font-extrabold text-center text-white mb-6">${post.value.title}</h1>`)
