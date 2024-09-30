@@ -1,20 +1,20 @@
 <template>
-  <div>
-    <button v-if="!isAuthenticated" @click="login">Login with GitHub</button>
-    <div v-else>
-      <p>Welcome, {{ user.name }}!</p>
-      <button @click="logout">Logout</button>
-    </div>
-  </div>
+  <button @click="login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> Login </button>
 </template>
 <script setup>
-import { useAuth0 } from '@auth0/auth0-vue'
+import { useSupabaseClient } from '#imports'
 
-const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0()
+const supabase = useSupabaseClient()
 
-const login = () => {
-  loginWithRedirect({
-    connection: 'github'
+const login = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+    options: {
+      redirectTo: `${window.location.origin}/confirm`
+    }
   })
+  if (error) {
+    console.error('Login error:', error)
+  }
 }
 </script>

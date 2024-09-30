@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@stefanobartoletti/nuxt-social-share',
     '@nuxtjs/sitemap',
+    '@nuxtjs/supabase',
   ],
 
   // configuration options
@@ -32,14 +33,13 @@ export default defineNuxtConfig({
     '~/plugins/marked.ts',
     '~/plugins/head.ts',
     '~/plugins/banner-content.ts',
-    { src: '~/plugins/auth0.client.ts', mode: 'client' }
   ],
 
   runtimeConfig: {
     public: {
-      auth0: {
-        domain: process.env.AUTH0_DOMAIN,
-        clientId: process.env.AUTH0_CLIENT_ID,
+      supabase: {
+        url: process.env.SUPABASE_URL,
+        key: process.env.SUPABASE_KEY,
       },
       apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi',
       siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi'

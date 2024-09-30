@@ -31,11 +31,19 @@
         </div>
         <NuxtLink v-if="post" :to="post.html_url" target="_blank" class="mt-6 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"> Comment on GitHub </NuxtLink>
     </main>
+    <!-- 如果用户已登录，显示用户信息 -->
+    <div v-if="user">
+        <h2>User Info</h2>
+        <pre>{{ JSON.stringify(user, null, 2) }}</pre>
+    </div>
 </template>
 <script setup lang="ts">
 import { useAsyncData } from '#app'
 import { useRoute } from 'vue-router'
 import { useBannerContent } from '~/composables/useBannerContent'
+import { useSupabaseUser } from '#imports'
+
+const user = useSupabaseUser()
 
 const route = useRoute()
 const { setBannerContent } = useBannerContent()

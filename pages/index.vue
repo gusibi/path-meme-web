@@ -10,6 +10,7 @@ import { useBannerContent } from '~/composables/useBannerContent'
 const blogPosts = ref([])
 const { setBannerContent } = useBannerContent()
 
+
 // 使用 useAsyncData 来获取数据
 const { data: fetchedBlogPosts } = await useAsyncData('blogPosts', () => $fetch('/api/blog-posts'))
 
