@@ -54,7 +54,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi',
-      siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi'
+      siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi',
+      repoName: process.env.REPO_NAME || 'path-meme-db',
     }
   },
   gtag: {

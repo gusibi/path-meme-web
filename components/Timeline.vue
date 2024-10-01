@@ -19,9 +19,9 @@
             </div>
           </div>
           <div class="py-3">
-            <h3 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
+            <h1 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
               <NuxtLink :to="`/blog/${post.number}`" class="hover:underline">{{ post.title }}</NuxtLink>
-            </h3>
+            </h1>
             <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(truncatedBody(post.body))"></div>
           </div>
           <!-- 底部信息栏 -->

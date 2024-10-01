@@ -23,7 +23,13 @@
             </div>
         </article>
         <div v-if="post" class="mt-8">
-            <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Comments</h3>
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Comments</h3>
+                <NuxtLink v-if="post" :to="post.html_url" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 text-white font-medium rounded-lg text-sm transition duration-300 ease-in-out"> Comment on GitHub <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                </NuxtLink>
+            </div>
             <!-- 使用 CommentBox 组件 -->
             <CommentBox @comment-submitted="handleCommentSubmission" />
             <div v-if="post.comments && post.comments.length > 0">
@@ -31,7 +37,6 @@
             </div>
             <p v-else class="text-gray-600 dark:text-gray-400">No comments yet.</p>
         </div>
-        <NuxtLink v-if="post" :to="post.html_url" target="_blank" class="mt-6 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"> Comment on GitHub </NuxtLink>
     </main>
 </template>
 <script setup lang="ts">
@@ -45,10 +50,10 @@ const user = useSupabaseUser()
 const route = useRoute()
 const { setBannerContent } = useBannerContent()
 
-const { data: post } = await useAsyncData('post', () =>
+const { data: postData } = await useAsyncData('post', () =>
     $fetch(`/api/blog-posts/${route.params.id}`)
 )
-
+const post = ref(postData.value)
 
 // SEO优化
 useHead(() => ({
@@ -93,11 +98,13 @@ const getCommentCount = (comments: Array<{
     }
     return 0
 }
-const handleCommentSubmission = async (commentText: string) => {
-    // 实现提交评论的逻辑
-    console.log('Submitting comment:', commentText)
-    // 这里应该调用 API 来保存评论
-    // 保存成功后，可能需要刷新评论列表
+const handleCommentSubmission = async (newComment: any) => {
+    if (post.value && post.value.comments) {
+        // 添加新评论到评论列表
+        post.value.comments.push(newComment)
+        // 更新评论计数
+        post.value.comments_count = (post.value.comments_count || 0) + 1
+    }
 }
 
 if (post.value) {

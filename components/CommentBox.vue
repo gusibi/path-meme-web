@@ -1,18 +1,19 @@
 <template>
-  <div class="mb-6">
-    <div v-if="user" class="flex items-start space-x-4">
-      <img :src="user.user_metadata.avatar_url" :alt="user.user_metadata.full_name" class="w-10 h-10 rounded-full">
-      <div class="flex-grow">
-        <p class="font-semibold text-gray-700 dark:text-gray-300">{{ user.user_metadata.full_name }}</p>
-        <textarea v-model="commentText" class="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Write your comment here..."></textarea>
-        <button @click="submitComment" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"> Submit Comment </button>
+  <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded-md">
+    <div v-if="user" class="p-3">
+      <div class="flex items-start space-x-3">
+        <img :src="user.user_metadata.avatar_url" :alt="user.user_metadata.full_name" class="w-8 h-8 rounded-full">
+        <div class="flex-grow">
+          <textarea v-model="commentText" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm" rows="3" placeholder="Leave a comment"></textarea>
+          <div class="flex justify-end mt-2">
+            <button @click="submitComment" class="px-4 py-2 bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 text-white font-medium rounded-md text-sm transition duration-300 ease-in-out"> Comment </button>
+          </div>
+        </div>
       </div>
     </div>
-    <div v-else class="relative">
-      <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-md">
-        <p class="text-gray-500 dark:text-gray-400">Login to comment</p>
-      </div>
-      <button @click="login" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"> Login with GitHub to Comment </button>
+    <div v-else class="p-3 bg-gray-50 dark:bg-gray-800 text-center">
+      <p class="text-gray-600 dark:text-gray-400 mb-2 text-sm">Sign in to comment</p>
+      <button @click="login" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 text-white font-medium rounded-md text-sm transition duration-300 ease-in-out"> Sign in </button>
     </div>
   </div>
 </template>
@@ -29,23 +30,35 @@ const commentText = ref('')
 
 const emit = defineEmits(['comment-submitted'])
 
-const submitComment = () => {
+const submitComment = async () => {
   if (commentText.value.trim()) {
-    emit('comment-submitted', commentText.value)
-    commentText.value = '' // Clear the input after submission
+    try {
+      const response = await $fetch('/api/github/create-comment', {
+        method: 'POST',
+        body: {
+          issueNumber: route.params.id,
+          commentText: commentText.value
+        }
+      })
+      emit('comment-submitted', response) // 发出包含新评论数据的事件
+      commentText.value = '' // 清空输入框
+    } catch (error) {
+      console.error('Error submitting comment:', error)
+      // 处理错误，可能需要显示错误消息给用户
+    }
   }
 }
 
 const login = async () => {
   // 保存当前路径到 cookie
   const cookieName = useRuntimeConfig().public.supabase.cookieName
-  console.log("cookieName", cookieName)
   useCookie(`${cookieName}-redirect-path`).value = route.fullPath
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: `${window.location.origin}/auth/confirm`
+      redirectTo: `${window.location.origin}/auth/confirm`,
+      scopes: "public_repo"
     }
   })
   if (error) {

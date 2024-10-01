@@ -53,7 +53,7 @@ onMounted(() => {
 })
 
 watch(() => props.post, (newValue) => {
-    console.log('Post data changed:', newValue)
+    // console.log('Post data changed:', newValue)
 }, { deep: true })
 
 const formatDate = (dateString: string) => {

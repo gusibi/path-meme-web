@@ -13,6 +13,7 @@
   "dependencies": {
     "@nuxtjs/sitemap": "^6.1.1",
     "@nuxtjs/supabase": "^1.4.0",
+    "@octokit/rest": "^21.0.2",
     "@pinia/nuxt": "^0.5.4",
     "@stefanobartoletti/nuxt-social-share": "^1.1.1",
     "@tailwindcss/typography": "^0.5.15",
@@ -21,6 +22,7 @@
     "marked": "^14.1.2",
     "nuxt": "^3.13.2",
     "nuxt-gtag": "^3.0.1",
+    "octokit": "^4.0.2",
     "qrcode.vue": "^3.5.0",
     "twemoji": "^14.0.2",
     "vue": "latest",
