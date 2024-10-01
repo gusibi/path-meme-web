@@ -94,12 +94,12 @@ const formatDate = (dateString: string, showYear = false) => {
   }
 }
 
-const truncatedBody = (post: BlogPost) => {
+const truncatedBody = (post: string) => {
   const maxLength = 400;
-  if (post.body.length <= maxLength) {
-    return post.body;
+  if (post.length <= maxLength) {
+    return post;
   }
-  return post.body.slice(0, maxLength).trim() + '...';
+  return post.slice(0, maxLength).trim() + '...';
 }
 
 const renderLabels = (labels: Array<{ color: string; name: string }>) => {
