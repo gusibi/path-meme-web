@@ -2,14 +2,14 @@ export default defineNuxtRouteMiddleware((to, from) => {
     const user = useSupabaseUser()
     const supabase = useSupabaseClient()
 
-    console.log('Auth middleware executing')
-    console.log('Route:', to.path)
-    console.log('User:', user.value)
+    // console.log('Auth middleware executing')
+    // console.log('Route:', to.path)
+    // console.log('User:', user.value)
 
     // 检查会话状态
     const checkSession = async () => {
         const { data, error } = await supabase.auth.getSession()
-        console.log('[middleware auth] Session check:', data, error)
+        // console.log('[middleware auth] Session check:', data, error)
         return data.session
     }
 
@@ -17,7 +17,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (to.path === '/profile') {
         return checkSession().then(session => {
             if (!session) {
-                console.log('[middleware auth] No session, redirecting to login')
+                // console.log('[middleware auth] No session, redirecting to login')
                 return navigateTo('/login')
             }
         })
@@ -27,7 +27,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (to.path === '/login') {
         return checkSession().then(session => {
             if (session) {
-                console.log('[middleware auth] Session exists, redirecting to home')
+                // console.log('[middleware auth] Session exists, redirecting to home')
                 return navigateTo('/')
             }
         })
