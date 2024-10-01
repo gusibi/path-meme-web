@@ -49,6 +49,27 @@ const { data: post } = await useAsyncData('post', () =>
     $fetch(`/api/blog-posts/${route.params.id}`)
 )
 
+
+// SEO优化
+useHead(() => ({
+    title: post.value?.title,
+    meta: [
+        { name: 'description', content: post.value?.body.substring(0, 160) + '...' },
+        { name: 'keywords', content: post.value?.labels.map(label => label.name).join(', ') },
+        // Open Graph
+        { property: 'og:title', content: post.value?.title },
+        { property: 'og:description', content: post.value?.body.substring(0, 160) + '...' },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:url', content: `https://momo.gusibi.mobi/blog/${route.params.id}` },
+        // Twitter Card
+        { name: 'twitter:title', content: post.value?.title },
+        { name: 'twitter:description', content: post.value?.body.substring(0, 160) + '...' },
+    ],
+    link: [
+        { rel: 'canonical', href: `https://momo.gusibi.mobi/blog/${route.params.id}` }
+    ],
+}))
+
 const formatDate = (dateString: string, showYear = false) => {
     const date = new Date(dateString)
     const options: Intl.DateTimeFormatOptions = {

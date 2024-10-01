@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     '@stefanobartoletti/nuxt-social-share',
     '@nuxtjs/sitemap',
     '@nuxtjs/supabase',
+    'nuxt-gtag',
   ],
 
   // configuration options
@@ -52,13 +53,12 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      supabase: {
-        url: process.env.SUPABASE_URL,
-        key: process.env.SUPABASE_KEY,
-      },
       apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi',
       siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi'
     }
+  },
+  gtag: {
+    id: 'G-N7EW8Y4SEF'
   },
   supabase: {
     // Options

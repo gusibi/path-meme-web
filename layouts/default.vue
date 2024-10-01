@@ -3,14 +3,14 @@
     <header class="bg-primary dark:bg-secondary">
       <nav class="max-w-content mx-auto px-4 py-2 flex justify-between items-center">
         <div class="flex items-center cursor-pointer" @click="navigateToHome">
-          <img class="w-8 h-8 rounded-full mr-2" src="https://avatars.githubusercontent.com/u/1282277?v=4" alt="Avatar" />
+          <img class="w-8 h-8 rounded-full mr-2" src="https://avatars.githubusercontent.com/u/1282277?v=4" alt="古思乱讲 Avatar" />
           <div class="text-white dark:text-white text-xl font-bold">古思乱讲</div>
         </div>
-        <button class="text-primary dark:text-white text-2xl" @click="toggleNightMode">{{ nightModeIcon }}</button>
+        <button class="text-primary dark:text-white text-2xl" @click="toggleNightMode" aria-label="Toggle night mode">{{ nightModeIcon }}</button>
       </nav>
     </header>
     <div class="relative h-64 overflow-hidden">
-      <img class="w-full h-full object-cover" src="/banner2.jpeg" alt="Banner" />
+      <img class="w-full h-full object-cover" src="/banner2.jpeg" alt="Site Banner" />
       <div class="absolute inset-0 flex items-center justify-center dark:bg-black dark:bg-opacity-50">
         <div v-html="bannerContent"></div>
       </div>
@@ -32,7 +32,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, useHead } from '#imports'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -90,5 +90,28 @@ const addScrollEventListener = () => {
 onMounted(() => {
   initializeNightMode()
   addScrollEventListener()
+})
+
+// SEO优化
+useHead({
+  titleTemplate: (titleChunk) => {
+    return titleChunk ? `${titleChunk} - 古思乱讲` : '古思乱讲'
+  },
+  meta: [
+    { charset: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { name: 'description', content: '古思乱讲 - 一个关于技术、生活和思考的博客' },
+    { name: 'format-detection', content: 'telephone=no' },
+    // Open Graph
+    { property: 'og:site_name', content: '古思乱讲' },
+    { property: 'og:type', content: 'website' },
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:site', content: '@yourtwitterhandle' },
+  ],
+  link: [
+    { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+    { rel: 'canonical', href: 'https://momo.gusibi.mobi' }
+  ],
 })
 </script>
