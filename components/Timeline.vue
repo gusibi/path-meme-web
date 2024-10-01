@@ -22,7 +22,7 @@
             <h3 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
               <NuxtLink :to="`/blog/${post.number}`" class="hover:underline">{{ post.title }}</NuxtLink>
             </h3>
-            <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(post.body)"></div>
+            <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(truncatedBody(post.body))"></div>
           </div>
           <!-- 底部信息栏 -->
           <div class="pb-6 pt-3 flex justify-between items-center text-sm">
@@ -94,6 +94,13 @@ const formatDate = (dateString: string, showYear = false) => {
   }
 }
 
+const truncatedBody = (post: BlogPost) => {
+  const maxLength = 400;
+  if (post.body.length <= maxLength) {
+    return post.body;
+  }
+  return post.body.slice(0, maxLength).trim() + '...';
+}
 
 const renderLabels = (labels: Array<{ color: string; name: string }>) => {
   return labels.map(label => ({
