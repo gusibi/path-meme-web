@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-8 text-center">Repositories</h1>
-    <div class="columns-3 sm:columns-1 md:columns-2 lg:columns-3 gap-8">
+    <div class="columns-1 sm:columns-1 md:columns-2 lg:columns-3 gap-2">
       <div v-for="repo in repos" :key="repo.id" class="break-inside-avoid mb-4">
         <RepoCard :repo="repo" />
       </div>
@@ -21,7 +21,7 @@ const { data: reposData } = await useAsyncData('reposData', () =>
 )
 
 // 当数据获取完成后，更新 repos
-repos.value = reposData.value || []
+repos.value = reposData.value.repos || []
 
 // 设置 banner 内容
 setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">My Repositories</h1>')

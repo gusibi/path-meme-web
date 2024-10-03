@@ -30,6 +30,11 @@
       </div>
     </footer>
     <div ref="floatingTimeLabel" class="fixed top-5 right-5 bg-black bg-opacity-70 text-white px-4 py-2 rounded-full text-sm opacity-0 transition-opacity duration-300"></div>
+    <button @click="scrollToTop" class="fixed bottom-8 right-8 p-2 rounded-full bg-indigo-600 bg-opacity-50 text-white hover:bg-opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-opacity duration-300" :class="{ 'opacity-0': !showScrollTop, 'opacity-100': showScrollTop }">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+      </svg>
+    </button>
   </div>
 </template>
 <script setup lang="ts">
@@ -87,7 +92,26 @@ const addScrollEventListener = () => {
     }, 1500)
   })
 }
+const showScrollTop = ref(false);
 
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+};
+
+const checkScroll = () => {
+  showScrollTop.value = window.pageYOffset > 300;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', checkScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', checkScroll);
+});
 onMounted(() => {
   initializeNightMode()
   addScrollEventListener()

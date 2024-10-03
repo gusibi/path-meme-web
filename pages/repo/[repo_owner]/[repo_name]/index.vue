@@ -1,28 +1,48 @@
 <template>
     <div>
-        <RepoInfo v-if="fetchedBlogPosts && fetchedBlogPosts.repo" :repo="fetchedBlogPosts.repo" :repo-owner="route.params.repo_owner" :repo-name="route.params.repo_name" />
-        <RepoTimeline :blogPosts="blogPosts" />
+        <RepoInfo v-if="repoInfo" :repo="repoInfo" :repo-owner="route.params.repo_owner" :repo-name="route.params.repo_name" />
+        <RepoTimeline :blogPosts="blogPosts" :current-page="currentPage" :total-items="totalItems" :per-page="perPage" @page-change="onPageChange" />
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useBannerContent } from '~/composables/useBannerContent'
+const config = useRuntimeConfig()
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
+
 const blogPosts = ref([])
+const repoInfo = ref({})
+const currentPage = ref(1)
+const totalItems = ref(0)
+const perPage = ref(parseInt(config.public.perPageSize) || 20)
 const { setBannerContent } = useBannerContent()
 
-console.log("path: ", `/api/repo/${route.params.repo_owner}/${route.params.repo_name}/blog-posts`)
+const fetchBlogPosts = async (page = 1) => {
+    const { data: fetchedData } = await useAsyncData('blogPosts', () =>
+        $fetch(`/api/repo/${route.params.repo_owner}/${route.params.repo_name}/blog-posts`, {
+            params: { page, perPage: perPage.value }
+        })
+    )
 
-// 使用 useAsyncData 来获取数据
-const { data: fetchedBlogPosts } = await useAsyncData('blogPosts', () =>
-    $fetch(`/api/repo/${route.params.repo_owner}/${route.params.repo_name}/blog-posts`)
-)
-// 当数据获取完成后，更新 blogPosts
-blogPosts.value = fetchedBlogPosts.value?.blogPosts || []
+    repoInfo.value = fetchedData.value?.repo || {}
+    blogPosts.value = fetchedData.value?.blogPosts || []
+    totalItems.value = fetchedData.value?.pagination.totalItems || 0
+    perPage.value = fetchedData.value?.pagination.perPage || 20
+    currentPage.value = fetchedData.value?.pagination.currentPage || 1
+}
 
+// Fetch initial data
+await fetchBlogPosts()
+
+console.log(totalItems.value, perPage.value, currentPage.value)
+
+// Handle page changes
+const onPageChange = async (page: number) => {
+    await fetchBlogPosts(page)
+}
 // 设置 banner 内容
 setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">Welcome to My Blog</h1>')
 </script>

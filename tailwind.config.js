@@ -33,6 +33,10 @@ module.exports = {
       maxWidth: {
         'content': '800px',
       },
+      minWidth: {
+        '300': '300px',
+        '1/2': '50%',
+      },
     },
   },
   plugins: [

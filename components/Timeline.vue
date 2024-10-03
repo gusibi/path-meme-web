@@ -1,46 +1,38 @@
 <template>
   <div class="container max-w-content mx-auto px-4">
     <div class="space-y-8">
-      <div v-for="post in blogPosts" :key="post.id" class="flex items-start">
-        <!-- <div class="flex-shrink-0 mr-4">
-          <span class="inline-flex items-center justify-center w-8 h-8 rounded-full text-white" :style="{ backgroundColor: getLabelColor(post.labels) }">
-            {{ getFirstLabelChar(post.labels) }}
-          </span>
-        </div> -->
-        <div class="flex-grow bg-card-light dark:bg-card-dark rounded-lg px-6 shadow-xl" :data-post-id="post.number">
+      <article v-for="post in blogPosts" class="bg-card-light dark:bg-card-dark rounded-lg shadow-xl overflow-hidden">
+        <div class="px-6">
           <div class="pt-4 flex justify-between items-center text-sm">
-            <!-- 左上角标签 -->
             <div class="flex items-center space-x-4">
-              <PostLabels :labels="post.labels" />
+              <PostLabels :labels="post.labels" :repo-url="post.repo_url" />
             </div>
-            <!-- 右上角反应 -->
             <div class="flex items-center space-x-4">
               <PostReactions :reactions="post.reactions" class="" />
             </div>
           </div>
           <div class="py-3">
             <h1 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
-              <NuxtLink :to="`/blog/${post.number}`" class="hover:underline">{{ post.title }}</NuxtLink>
+              <NuxtLink :to="`${post.html_url}`" class="hover:underline">{{ post.title }}</NuxtLink>
             </h1>
-            <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(truncatedBody(post.body))"></div>
+            <div class="prose dark:prose-invert max-w-none" v-html="$md(truncatedBody(post.body))" />
           </div>
           <!-- 底部信息栏 -->
           <div class="pb-6 pt-3 flex justify-between items-center text-sm">
             <!-- 左下角 GitHub 链接 -->
             <div class="flex items-center space-x-4">
-              <a class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :href="post.html_url" target="_blank">🔗</a>
+              <a class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :href="post.github_url" target="_blank">🔗</a>
               <span class="text-gray-500 dark:text-gray-400">{{ formatDate(post.created_at, false) }}</span>
             </div>
             <div class="flex items-center space-x-4">
-              <CommentButton :post-number="post.number" :comment-count="post.comments || 0" />
-              <ShareButton :post="post" :card-selector="`[data-post-id='${post.number}']`" />
+              <CommentButton :post-number="post.number" :repo-url="post.repo_url" :comment-count="post.comments || 0" />
+              <ShareButton :post="post" :repo-url="post.repo_url" :card-selector="`[data-post-id='${post.number}']`" />
             </div>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   </div>
-  <!-- <ShareModal :post="selectedPost" :is-open="isShareModalOpen" @close="closeShareModal" /> -->
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'

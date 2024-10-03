@@ -1,19 +1,12 @@
 <template>
   <div class="container max-w-content mx-auto px-4">
     <div class="space-y-8">
-      <div v-for="post in blogPosts" :key="post.id" class="flex items-start">
-        <!-- <div class="flex-shrink-0 mr-4">
-          <span class="inline-flex items-center justify-center w-8 h-8 rounded-full text-white" :style="{ backgroundColor: getLabelColor(post.labels) }">
-            {{ getFirstLabelChar(post.labels) }}
-          </span>
-        </div> -->
-        <div class="flex-grow bg-card-light dark:bg-card-dark rounded-lg px-6 shadow-xl" :data-post-id="post.number">
+      <article v-for="post in blogPosts" class="bg-card-light dark:bg-card-dark rounded-lg shadow-xl overflow-hidden">
+        <div class="px-6">
           <div class="pt-4 flex justify-between items-center text-sm">
-            <!-- 左上角标签 -->
             <div class="flex items-center space-x-4">
               <PostLabels :labels="post.labels" :repo-url="post.repo_url" />
             </div>
-            <!-- 右上角反应 -->
             <div class="flex items-center space-x-4">
               <PostReactions :reactions="post.reactions" class="" />
             </div>
@@ -22,7 +15,7 @@
             <h1 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
               <NuxtLink :to="`${post.html_url}`" class="hover:underline">{{ post.title }}</NuxtLink>
             </h1>
-            <div class="mt-2 text-sm prose dark:prose-invert" v-html="$md(truncatedBody(post.body))"></div>
+            <div class="prose dark:prose-invert max-w-none" v-html="$md(truncatedBody(post.body))" />
           </div>
           <!-- 底部信息栏 -->
           <div class="pb-6 pt-3 flex justify-between items-center text-sm">
@@ -37,14 +30,17 @@
             </div>
           </div>
         </div>
-      </div>
+      </article>
     </div>
+    <Pagination :current-page="currentPage" :total-items="totalItems" :per-page="perPage" @page-change="onPageChange" />
   </div>
   <!-- <ShareModal :post="selectedPost" :is-open="isShareModalOpen" @close="closeShareModal" /> -->
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
 import ShareModal from '~/components/ShareButton.vue'
+import Pagination from '~/components/Pagination.vue'
+
 
 interface BlogPost {
   id: number
@@ -62,9 +58,27 @@ const props = defineProps({
   blogPosts: {
     type: Array as PropType<BlogPost[]>,
     required: true,
-    default: () => []  // 添加默认值
+    default: () => []
+  },
+  currentPage: {
+    type: Number,
+    required: true
+  },
+  totalItems: {
+    type: Number,
+    required: true
+  },
+  perPage: {
+    type: Number,
+    required: true
   }
 })
+
+const emit = defineEmits(['pageChange'])
+
+const onPageChange = (page: number) => {
+  emit('pageChange', page)
+}
 
 const selectedPost = ref<BlogPost | null>(null)
 const isShareModalOpen = ref(false)

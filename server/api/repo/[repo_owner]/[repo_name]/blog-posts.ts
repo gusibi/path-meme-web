@@ -7,6 +7,8 @@ export default defineEventHandler(async (event) => {
     const { repo_owner, repo_name } = event.context.params
     const query = getQuery(event)
     const tag = query.tag as string
+    const page = parseInt(query.page as string) || 1
+    const perPage = parseInt(query.perPage as string) || 20
 
     // console.log("github issus: ", repo_owner, repo_name, tag)
     var token = getCookie(event, 'github_token')
@@ -30,16 +32,23 @@ export default defineEventHandler(async (event) => {
         var req_data = {
             owner: repo_owner,
             repo: repo_name,
-            state: 'open', // 只获取开放的 issues
+            // state: 'open', // 只获取开放的 issues
             sort: 'created',
             direction: 'desc',
-            per_page: 10 // 限制返回的数量，你可以根据需要调整
+            per_page: perPage,// 限制返回的数量，你可以根据需要调整
+            page: page,
+            labels: tag
         }
         req_data.labels = tag
 
         // 获取仓库的 issues 列表
-        const { data: issues } = await octokit.issues.listForRepo(req_data)
+        const { data: issues, headers } = await octokit.issues.listForRepo(req_data)
+        // console.log("issues: ", headers)
+        const totalItems = getTotalPages(headers, page) * perPage
 
+        // console.log("query:", query, "page:", page, "perPage: ", perPage, "total: ", totalItems, repo_owner, repo_name)
+        // Get total count of issues
+        // console.log("total: ", totalItems)
         return {
             repo: {
                 name: repoData.name,
@@ -61,7 +70,12 @@ export default defineEventHandler(async (event) => {
                 author: issue.user.login,
                 repo_url: `/repo/${repo_owner}/${repo_name}`,
                 url: issue.html_url
-            }))
+            })),
+            pagination: {
+                currentPage: page,
+                totalItems: totalItems,
+                perPage: perPage
+            }
         }
     } catch (error) {
         console.error('Error fetching data from GitHub:', error)
@@ -71,3 +85,24 @@ export default defineEventHandler(async (event) => {
         })
     }
 })
+
+function getTotalPages(headers: Record<string, any>, currentPage: number): number {
+    if (!headers['link']) {
+        return 1;
+    }
+    // console.log(headers['link'])
+
+    let totalPage = 1
+    const links = headers['link'].split(',');
+    for (const link of links) {
+        const match = link.match(/&page=(\d+)>; rel="last"/);
+        if (match) {
+            totalPage = parseInt(match[1], 10);
+        }
+    }
+
+    if (currentPage > totalPage) {
+        totalPage = currentPage
+    }
+    return totalPage;
+}
