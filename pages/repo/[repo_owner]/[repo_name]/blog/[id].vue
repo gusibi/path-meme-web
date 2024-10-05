@@ -114,11 +114,11 @@ if (post.value) {
     setBannerContent(`
     <div class="text-center text-white">
       <div class="mb-2">
-        <a href="/repo/${route.params.repo_owner}/${route.params.repo_name}" class="text-lg font-semibold hover:underline">
+        <a href="/repo/${route.params.repo_owner}/${route.params.repo_name}" class="underline decoration-sky-500 text-base font-semibold hover:underline">
           ${route.params.repo_owner}/${route.params.repo_name}
         </a>
       </div>
-      <h1 class="text-4xl font-extrabold mb-4">${post.value.title}</h1>
+      <h1 class="text-3xl font-extrabold mb-4 ">${post.value.title}</h1>
       <div class="flex items-center justify-center">
         <img src="${post.value.avatar_url}" alt="${post.value.author}" class="w-10 h-10 rounded-full mr-3">
         <div class="text-left">

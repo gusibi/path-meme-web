@@ -18,7 +18,7 @@ const perPage = ref(parseInt(config.public.perPageSize) || 20)
 
 const fetchBlogPosts = async (page = 1) => {
     const { data: fetchedData } = await useAsyncData('blogPosts', () =>
-        $fetch(`/api/repo/${config.public.repoOwner}/${config.public.repoName}/blog-posts`, {
+        $fetch(`/api/repo/${route.params.repo_owner}/${route.params.repo_name}/blog-posts`, {
             params: { page, perPage: perPage.value, tag: route.params.name }
         })
     )

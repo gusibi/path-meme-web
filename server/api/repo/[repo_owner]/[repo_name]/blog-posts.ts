@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
             labels: tag
         }
         req_data.labels = tag
+        // console.log("request: ", req_data)
 
         // 获取仓库的 issues 列表
         const { data: issues, headers } = await octokit.issues.listForRepo(req_data)

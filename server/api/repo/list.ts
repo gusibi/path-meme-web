@@ -3,19 +3,27 @@ import { defineEventHandler, getQuery } from 'h3'
 const repos = [
     {
         name: "path-meme-db",
-        description: "A Nuxt.js project with cool features",
-        stars: 120,
+        description: "一些胡言乱语",
+        stars: 1,
         forks: 35,
         owner_name: "gusibi",
-        updated_at: "2023-05-15T10:30:00Z"
+        updated_at: "2024-10-05T10:30:00Z"
     },
     {
         name: "weekly",
-        description: "An awesome Vue.js library for developers",
-        stars: 250,
+        description: "科技爱好者周刊，每周五发布",
+        stars: 46801,
         forks: 60,
         owner_name: "ruanyf",
-        updated_at: "2023-05-10T14:45:00Z"
+        updated_at: "2024-10-05T14:45:00Z"
+    },
+    {
+        name: "Python",
+        description: "All Algorithms implemented in Python",
+        stars: 187181,
+        forks: 60,
+        owner_name: "TheAlgorithms",
+        updated_at: "2024-10-05T14:45:00Z"
     },
     // ... 添加更多仓库数据
 ]
