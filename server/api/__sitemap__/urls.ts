@@ -2,20 +2,39 @@ import { defineSitemapEventHandler, asSitemapUrl, useRuntimeConfig } from '#impo
 
 export default defineSitemapEventHandler(async () => {
   const config = useRuntimeConfig()
-  // 从你的 API 获取博客文章
-  const response = await fetch(`${config.public.apiBaseUrl}/api/blog-posts`)
+  let repoList = ["gusibi/path-meme-db", 'ruanyf/weekly']
 
-  if (!response.ok) {
-    throw createError({
-      statusCode: response.status,
-      statusMessage: response.statusText,
-      message: `Failed to fetch blog posts`
-    })
+  const fetchBlogPosts = async (repo: string, page = 1, perPage = 50) => {
+    try {
+      const response = await $fetch(`/api/repo/${repo}/blog-posts`, {
+        params: { page, perPage }
+      })
+      // console.log("reponse: ", response)
+      return response.blogPosts || []
+    } catch (error) {
+      console.error(`Failed to fetch blog posts for ${repo}:`, error)
+      return []
+    }
   }
 
-  const posts = await response.json()
-  return posts.map(post => asSitemapUrl({
-    loc: `/blog/${post.number}`,
+  let allPosts = []
+
+  for (const repo of repoList) {
+    console.log("repo: ", repo)
+    let page = 1
+    let posts = []
+    do {
+      const fetchedPosts = await fetchBlogPosts(repo, page)
+      // console.log("fetchedPosts", fetchedPosts)
+      posts = posts.concat(fetchedPosts)
+      page++
+    } while (posts.length % 100 === 0 && posts.length > 0) // 假设每页100篇文章，如果不足100说明是最后一页
+
+    allPosts = allPosts.concat(posts)
+  }
+
+  return allPosts.map(post => asSitemapUrl({
+    loc: post.html_url,
     lastmod: post.updated_at,
     changefreq: 'weekly',
     priority: 0.8

@@ -15,7 +15,7 @@
             <h1 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
               <NuxtLink :to="`${post.html_url}`" class="hover:underline">{{ post.title }}</NuxtLink>
             </h1>
-            <div class="prose dark:prose-invert max-w-none" v-html="$md(truncatedBody(post.body))" />
+            <div class="pt-4 prose dark:prose-invert max-w-none" v-html="$md(truncatedBody(post.body))" />
           </div>
           <!-- 底部信息栏 -->
           <div class="pb-6 pt-3 flex justify-between items-center text-sm">

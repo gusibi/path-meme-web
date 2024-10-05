@@ -10,10 +10,9 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useBannerContent } from '~/composables/useBannerContent'
-
+import { useBannerContentInjection } from '~/composables/useBannerContent'
+const { setBannerContent, setBannerImage } = useBannerContentInjection()
 const repos = ref([])
-const { setBannerContent } = useBannerContent()
 
 // 使用 useAsyncData 来获取仓库数据
 const { data: reposData } = await useAsyncData('reposData', () =>
@@ -25,4 +24,5 @@ repos.value = reposData.value.repos || []
 
 // 设置 banner 内容
 setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">My Repositories</h1>')
+setBannerImage("/repo-banner.jpeg")
 </script>

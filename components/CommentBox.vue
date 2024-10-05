@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4 border border-gray-200 dark:border-gray-700 rounded-md">
+  <div class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 ">
     <div v-if="user" class="p-3">
       <div class="flex items-start space-x-3">
         <img :src="user.user_metadata.avatar_url" :alt="user.user_metadata.full_name" class="w-8 h-8 rounded-full">
@@ -13,7 +13,7 @@
     </div>
     <div v-else class="p-3 bg-gray-50 dark:bg-gray-800 text-center">
       <p class="text-gray-600 dark:text-gray-400 mb-2 text-sm">Sign in to comment</p>
-      <button @click="login" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 text-white font-medium rounded-md text-sm transition duration-300 ease-in-out"> Sign in </button>
+      <button @click="login" class="px-4 py-2 bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 text-white font-medium rounded-md text-sm transition duration-300 ease-in-out"> Sign in With Github </button>
     </div>
   </div>
 </template>

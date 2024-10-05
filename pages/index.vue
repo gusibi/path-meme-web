@@ -5,14 +5,14 @@
 </template>
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useBannerContent } from '~/composables/useBannerContent'
+import { useBannerContentInjection } from '~/composables/useBannerContent'
+const { setBannerContent, setBannerImage } = useBannerContentInjection()
 const config = useRuntimeConfig()
 
 const blogPosts = ref([])
 const currentPage = ref(1)
 const totalItems = ref(0)
 const perPage = ref(parseInt(config.public.perPageSize) || 20)
-const { setBannerContent } = useBannerContent()
 
 const fetchBlogPosts = async (page = 1) => {
   const { data: fetchedData } = await useAsyncData('blogPosts', () =>
@@ -37,5 +37,6 @@ const onPageChange = async (page: number) => {
   await fetchBlogPosts(page)
 }
 // 设置 banner 内容
-setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">Welcome to My Blog</h1>')
+setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">古思乱讲</h1>')
+setBannerImage('/banner2.jpeg')
 </script>

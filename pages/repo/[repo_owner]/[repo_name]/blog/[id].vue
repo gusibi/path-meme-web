@@ -2,7 +2,7 @@
     <main class="container max-w-content mx-auto px-4 ">
         <article v-if="post" class="bg-card-light dark:bg-card-dark rounded-lg shadow-xl overflow-hidden">
             <div class="px-6 py-6">
-                <h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{{ post.title }}</h1>
+                <!-- <h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">{{ post.title }}</h1> -->
                 <div class="mb-4 flex justify-center items-center text-sm text-gray-600 dark:text-gray-400">
                     <PostLabels :labels="post.labels" :repo-url="post.repo_url" />
                 </div>
@@ -42,13 +42,13 @@
 <script setup lang="ts">
 import { useAsyncData } from '#app'
 import { useRoute } from 'vue-router'
-import { useBannerContent } from '~/composables/useBannerContent'
 import { useSupabaseUser } from '#imports'
+import { useBannerContentInjection } from '~/composables/useBannerContent'
+const { setBannerContent, setBannerImage } = useBannerContentInjection()
 
 const user = useSupabaseUser()
 
 const route = useRoute()
-const { setBannerContent } = useBannerContent()
 
 const { data: postData } = await useAsyncData('post', () =>
     $fetch(`/api/repo/${route.params.repo_owner}/${route.params.repo_name}/issues/${route.params.id}`)
@@ -111,6 +111,23 @@ const handleCommentSubmission = async (newComment: any) => {
 }
 
 if (post.value) {
-    setBannerContent(`<h1 class="text-4xl font-extrabold text-center text-white mb-6">${post.value.title}</h1>`)
+    setBannerContent(`
+    <div class="text-center text-white">
+      <div class="mb-2">
+        <a href="/repo/${route.params.repo_owner}/${route.params.repo_name}" class="text-lg font-semibold hover:underline">
+          ${route.params.repo_owner}/${route.params.repo_name}
+        </a>
+      </div>
+      <h1 class="text-4xl font-extrabold mb-4">${post.value.title}</h1>
+      <div class="flex items-center justify-center">
+        <img src="${post.value.avatar_url}" alt="${post.value.author}" class="w-10 h-10 rounded-full mr-3">
+        <div class="text-left">
+          <div class="font-medium">${post.value.author}</div>
+          <div class="text-sm opacity-75">${formatDate(post.value.created_at)}</div>
+        </div>
+      </div>
+    </div>
+  `)
+    setBannerImage('/banner3.jpeg')
 }
 </script>

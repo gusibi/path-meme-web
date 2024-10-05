@@ -32,6 +32,7 @@ export default defineEventHandler(async (event) => {
             issue_number: parseInt(id)
         })
 
+        // console.log("avatar: ", issue.user?.avatar_url)
         return {
             number: issue.number,
             title: issue.title,
@@ -39,6 +40,7 @@ export default defineEventHandler(async (event) => {
             created_at: issue.created_at,
             updated_at: issue.updated_at,
             author: issue.user.login,
+            avatar_url: issue.user.avatar_url,
             labels: issue.labels,
             github_url: issue.html_url,
             repo_url: `/repo/${repo_owner}/${repo_name}`,

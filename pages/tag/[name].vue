@@ -5,11 +5,9 @@
 </template>
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { useBannerContent } from '~/composables/useBannerContent'
-
+import { useBannerContentInjection } from '~/composables/useBannerContent'
+const { setBannerContent } = useBannerContentInjection()
 const route = useRoute()
-const { setBannerContent } = useBannerContent()
-
 const { data: blogPosts } = await useAsyncData('taggedPosts', () =>
   $fetch('/api/tag-posts', {
     params: { tag: route.params.name }

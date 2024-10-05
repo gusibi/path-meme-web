@@ -42,14 +42,13 @@
 <script setup lang="ts">
 import { useAsyncData } from '#app'
 import { useRoute } from 'vue-router'
-import { useBannerContent } from '~/composables/useBannerContent'
+import { useBannerContentInjection } from '~/composables/useBannerContent'
+const { setBannerContent } = useBannerContentInjection()
 import { useSupabaseUser } from '#imports'
 
 const user = useSupabaseUser()
 
 const route = useRoute()
-const { setBannerContent } = useBannerContent()
-
 const { data: postData } = await useAsyncData('post', () =>
     $fetch(`/api/blog-posts/${route.params.id}`)
 )

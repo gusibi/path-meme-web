@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+  <div class="bg-card-light dark:bg-card-dark rounded-lg shadow-xl overflow-hidden flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 mt-6 sm:px-6">
     <div class="flex flex-1 justify-between sm:hidden">
       <a href="#" @click.prevent="onPageChange(currentPage - 1)" :class="[currentPage === 1 ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-50', 'relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700']" :aria-disabled="currentPage === 1"> Previous </a>
       <a href="#" @click.prevent="onPageChange(currentPage + 1)" :class="[currentPage === totalPages ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-50', 'relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700']" :aria-disabled="currentPage === totalPages"> Next </a>
