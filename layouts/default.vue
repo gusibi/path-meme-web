@@ -109,6 +109,7 @@ const nightModeIcon = ref('🌙')
 const mobileMenuOpen = ref(false)
 const mobileFriendLinksOpen = ref(false)
 const floatingTimeLabel = ref<HTMLElement | null>(null)
+const config = useRuntimeConfig()
 
 const toggleNightMode = () => {
   document.documentElement.classList.toggle('dark')
@@ -192,23 +193,19 @@ onMounted(() => {
 // SEO优化
 useHead({
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - 古思乱讲` : '古思乱讲'
+    return titleChunk ? `${titleChunk} - ${config.public.siteTitle}` : config.public.siteTitle
   },
   meta: [
-    { charset: 'utf-8' },
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    { name: 'description', content: '古思乱讲 - 一个关于技术、生活和思考的博客' },
+    { name: 'description', content: config.public.siteDescription },
     { name: 'format-detection', content: 'telephone=no' },
-    // Open Graph
-    { property: 'og:site_name', content: '古思乱讲' },
+    { property: 'og:site_name', content: config.public.siteTitle },
     { property: 'og:type', content: 'website' },
-    // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:site', content: '@yourtwitterhandle' },
+    { name: 'twitter:site', content: config.public.twitterHandle },
   ],
   link: [
     { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-    { rel: 'canonical', href: 'https://momo.gusibi.mobi' }
+    { rel: 'canonical', href: config.public.siteUrl }
   ],
 })
 </script>

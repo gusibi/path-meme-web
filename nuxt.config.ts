@@ -1,20 +1,32 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  site: {
-    url: 'https://momo.gusibi.mobi',
-    name: '古思乱讲'
+  // site: {
+  //   url: 'https://momo.gusibi.mobi',
+  //   name: '古思乱讲'
+  // },
+  app: {
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      titleTemplate: '%s - 古思乱讲',
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'format-detection', content: 'telephone=no' },
+        // Open Graph
+        { property: 'og:type', content: 'website' },
+        // Twitter Card
+        { name: 'twitter:card', content: 'summary_large_image' },
+      ],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ]
+    }
   },
   ssr: false,
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt',
-    '@stefanobartoletti/nuxt-social-share',
-    '@nuxtjs/sitemap',
-    '@nuxtjs/supabase',
-    'nuxt-gtag',
-  ],
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@stefanobartoletti/nuxt-social-share', '@nuxtjs/sitemap', '@nuxtjs/supabase', 'nuxt-gtag', 'nuxt-clarity-analytics'],
 
   // configuration options
   socialShare: {
@@ -54,10 +66,13 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBaseUrl: process.env.API_BASE_URL || 'https://path-memo-api.gusibi.mobi',
-      siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi',
       repoOwner: process.env.REPO_OWNER || 'gusibi',
       repoName: process.env.REPO_NAME || 'path-meme-db',
       perPageSize: process.env.PER_PAGE_SIZE || '10',
+      siteTitle: '古思乱讲',
+      siteDescription: '古思乱讲 - 一个关于技术、生活和思考的博客',
+      siteUrl: process.env.SITE_URL || 'https://momo.gusibi.mobi',
+      twitterHandle: '@yourtwitterhandle'
     },
     private: {
       githubToken: process.env.GITHUB_TOKEN
