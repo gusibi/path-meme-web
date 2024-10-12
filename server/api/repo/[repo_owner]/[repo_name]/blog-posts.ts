@@ -39,6 +39,14 @@ export default defineEventHandler(async (event) => {
                     repoData = await updateOrCreateRepo(event, githubRepoInfo, repoData)
                 } catch (error) {
                     console.error('Failed to fetch repos from DB, errpr: ', error)
+                    repoData = {
+                        name: githubRepoInfo.repo_name || '',
+                        description: githubRepoInfo.repo_description || '',
+                        stars: githubRepoInfo.stars_count || 0,
+                        forks: githubRepoInfo.forks_count || 0,
+                        owner_name: githubRepoInfo.repo_owner || '',
+                        updated_at: githubRepoInfo.updated_at
+                    }
                 }
             } catch (error) {
                 console.error('Failed to fetch or update repo info:', error)

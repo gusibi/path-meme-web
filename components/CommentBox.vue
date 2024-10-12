@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 ">
-    <div v-if="isLoggedIn" class="p-3">
+    <div v-if="isLoggedIn.value" class="p-3">
       <div class="flex items-start space-x-3">
         <img :src="user.user_metadata.avatar_url" :alt="user.user_metadata.full_name" class="w-8 h-8 rounded-full">
         <div class="flex-grow">
@@ -26,7 +26,6 @@ const user = useSupabaseUser()
 const supabase = useSupabaseClient()
 const route = useRoute()
 
-// console.log("user: ", user)
 const commentText = ref('')
 const isLoggedIn = ref(false)
 
@@ -38,6 +37,8 @@ const checkLoginStatus = () => {
   const githubUser = useCookie('github_username').value
   isLoggedIn.value = !!githubToken && !!githubUser
 }
+
+// console.log("user: ", user, "is_login", isLoggedIn.value, "<<<")
 
 // 在组件挂载时检查登录状态
 onMounted(() => {

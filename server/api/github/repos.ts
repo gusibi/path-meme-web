@@ -3,10 +3,16 @@ import { Octokit } from '@octokit/rest'
 
 export async function getGitHubRepoInfo(event: H3Event, owner: string, repo: string) {
   const config = useRuntimeConfig()
-  const octokit = new Octokit({ auth: config.githubToken })
+  var token = getCookie(event, 'github_token')
+  if (!token) {
+    token = config.private.githubToken
+  }
+  // console.log("token: ", token)
+  const octokit = new Octokit({ auth: token })
 
   try {
-    const { data: githubRepo } = await octokit.repos.get({ owner, repo })
+    const { data: githubRepo, headers } = await octokit.repos.get({ owner, repo })
+    // console.log(headers)
 
     return {
       repo_id: githubRepo.id,

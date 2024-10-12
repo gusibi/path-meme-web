@@ -1,4 +1,5 @@
 import { serverSupabaseClient } from '#supabase/server'
+import { checkAuth } from '~/utils/auth'
 import { H3Event } from 'h3'
 interface RepoData {
   name: string;
@@ -21,6 +22,7 @@ interface RepoInfoTab {
   updated_at: string;
   repo_detail: object;
 }
+
 // 列表查询函数
 export async function getReposList(event: H3Event) {
   const client = await serverSupabaseClient(event)
@@ -111,16 +113,19 @@ export async function updateOrCreateRepo(event: H3Event, githubRepoData: any, re
     repoTab.is_show = repoData.is_show
     repoTab.created_at = repoData.created_at
   }
-  // console.log("repo_tab: ", repoTab)
-  // 更新或插入数据库
-  const { data, error } = await client
-    .from('repo_info_tab')
-    .upsert(repoTab, { onConflict: 'repo_id' })
-    .select()
-    .single()
+  const { isAuthenticated, user } = await checkAuth(event)
+  if (isAuthenticated) {
+    // console.log("repo_tab: ", repoTab)
+    // 更新或插入数据库
+    const { data, error } = await client
+      .from('repo_info_tab')
+      .upsert(repoTab, { onConflict: 'repo_id' })
+      .select()
+      .single()
 
-  if (error) throw createError({ statusCode: 400, statusMessage: error.message })
+    if (error) throw createError({ statusCode: 400, statusMessage: error.message })
 
+  }
   const formattedData: RepoData = {
     name: repoTab.repo_name || '',
     description: repoTab.repo_detail.description || '',
