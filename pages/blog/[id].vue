@@ -6,7 +6,7 @@
                 <div class="mb-4 flex justify-center items-center text-sm text-gray-600 dark:text-gray-400">
                     <PostLabels :labels="post.labels" />
                 </div>
-                <div class="prose dark:prose-invert max-w-none" v-html="$md(post.body)" />
+                <div class="prose dark:prose-invert max-w-none" v-html="$md(post.body || '')" />
                 <!-- 底部信息栏 -->
                 <div class=" pt-3 flex justify-between items-center text-sm">
                     <!-- 左下角 GitHub 链接 -->
@@ -57,16 +57,16 @@ const post = ref(postData.value)
 useHead(() => ({
     title: post.value?.title,
     meta: [
-        { name: 'description', content: post.value?.body.substring(0, 160) + '...' },
+        { name: 'description', content: truncatedBody(post.value?.body, 160) },
         { name: 'keywords', content: post.value?.labels.map(label => label.name).join(', ') },
         // Open Graph
         { property: 'og:title', content: post.value?.title },
-        { property: 'og:description', content: post.value?.body.substring(0, 160) + '...' },
+        { property: 'og:description', content: truncatedBody(post.value?.body, 160) },
         { property: 'og:type', content: 'article' },
         { property: 'og:url', content: `https://momo.gusibi.mobi/blog/${route.params.id}` },
         // Twitter Card
         { name: 'twitter:title', content: post.value?.title },
-        { name: 'twitter:description', content: post.value?.body.substring(0, 160) + '...' },
+        { name: 'twitter:description', content: truncatedBody(post.value?.body, 160) },
     ],
     link: [
         { rel: 'canonical', href: `https://momo.gusibi.mobi/blog/${route.params.id}` }
@@ -84,6 +84,21 @@ const formatDate = (dateString: string, showYear = false) => {
     }
     return new Intl.DateTimeFormat('en-US', options).format(date)
 }
+
+const truncatedBody = (post: string, length: number) => {
+    if (!post) {
+        return ""
+    }
+    let maxLength = 400;
+    if (length > 0) {
+        maxLength = length
+    }
+    if (post.length <= maxLength) {
+        return post;
+    }
+    return post.slice(0, maxLength).trim() + '...';
+}
+
 
 const getCommentCount = (comments: Array<{
     id: number

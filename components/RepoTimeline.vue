@@ -109,6 +109,9 @@ const formatDate = (dateString: string, showYear = false) => {
 }
 
 const truncatedBody = (post: string) => {
+  if (!post) {
+    return ""
+  }
   const maxLength = 400;
   if (post.length <= maxLength) {
     return post;

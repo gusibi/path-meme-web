@@ -15,6 +15,12 @@ const handleLogout = async () => {
     try {
         const { error } = await supabase.auth.signOut()
         if (error) throw error
+        //  删除 GitHub 相关的 cookie
+        const githubTokenCookie = useCookie('github_token')
+        const githubUsernameCookie = useCookie('github_username')
+
+        githubTokenCookie.value = null
+        githubUsernameCookie.value = null
 
         // 登出成功后重定向到首页或登录页
         await router.push('/')

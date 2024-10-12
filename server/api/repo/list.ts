@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
         repos = defaultRepos
     }
 
-    console.log("repos: ", repos)
+    // console.log("repos: ", repos)
     const startIndex = (page - 1) * limit
     const endIndex = page * limit
 

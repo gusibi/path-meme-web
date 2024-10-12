@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 ">
-    <div v-if="isLoggedIn.value" class="p-3">
+    <div v-if="isLoggedIn" class="p-3">
       <div class="flex items-start space-x-3">
         <img :src="user.user_metadata.avatar_url" :alt="user.user_metadata.full_name" class="w-8 h-8 rounded-full">
         <div class="flex-grow">
@@ -27,22 +27,14 @@ const supabase = useSupabaseClient()
 const route = useRoute()
 
 const commentText = ref('')
-const isLoggedIn = ref(false)
 
 const emit = defineEmits(['comment-submitted'])
 
 // 新增：检查登录状态的函数
-const checkLoginStatus = () => {
+const isLoggedIn = computed(() => {
   const githubToken = useCookie('github_token').value
   const githubUser = useCookie('github_username').value
-  isLoggedIn.value = !!githubToken && !!githubUser
-}
-
-// console.log("user: ", user, "is_login", isLoggedIn.value, "<<<")
-
-// 在组件挂载时检查登录状态
-onMounted(() => {
-  checkLoginStatus()
+  return !!githubToken && !!githubUser && !!user.value
 })
 
 
@@ -56,7 +48,6 @@ const submitComment = async () => {
           commentText: commentText.value
         }
       })
-      console.log(response)
       emit('comment-submitted', response) // 发出包含新评论数据的事件
       commentText.value = '' // 清空输入框
     } catch (error) {
