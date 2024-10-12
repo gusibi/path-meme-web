@@ -35,7 +35,6 @@
             <div v-if="post.comments && post.comments.length > 0">
                 <PostComment v-for="comment in post.comments" :key="comment.id" :comment="comment" />
             </div>
-            <p v-else class="text-gray-600 dark:text-gray-400">No comments yet.</p>
         </div>
     </main>
 </template>

@@ -1,89 +1,68 @@
 // server/api/repo/[repo_owner]/[repo_name]/blog-posts.ts
 
 import { defineEventHandler } from 'h3'
-import { Octokit } from '@octokit/rest'
+import { getGitHubRepoInfo } from '../../../github/repos'
+import { getIssuesList } from '../../../github/issues'
+import { getRepoById, updateOrCreateRepo } from '../../../repos'
+
 
 export default defineEventHandler(async (event) => {
-    const { repo_owner, repo_name } = event.context.params
     const query = getQuery(event)
-    const tag = query.tag as string
     const page = parseInt(query.page as string) || 1
     const perPage = parseInt(query.perPage as string) || 20
-
-    // console.log("github issus: ", repo_owner, repo_name, tag)
-    var token = getCookie(event, 'github_token')
-
-    const config = useRuntimeConfig()
-    if (!token) {
-        token = config.private.githubToken
-    }
-    // console.log("github token: ", token)
-    const octokit = new Octokit({
-        auth: token
-    })
+    const { repo_owner, repo_name } = event.context.params
+    const tag = query.tag as string
 
     try {
-        // 获取仓库信息
-        const { data: repoData } = await octokit.repos.get({
-            owner: repo_owner,
-            repo: repo_name,
-        })
-
-        var req_data = {
-            owner: repo_owner,
-            repo: repo_name,
-            // state: 'open', // 只获取开放的 issues
-            sort: 'created',
-            direction: 'desc',
-            per_page: perPage,// 限制返回的数量，你可以根据需要调整
-            page: page,
-            labels: tag
+        let repoData
+        try {
+            // 尝试从 /api/repos/list 获取数据
+            repoData = await getRepoById(event, `${repo_owner}/${repo_name}`)
+        } catch (error) {
+            console.error('Failed to fetch repos from DB, errpr: ', error)
         }
-        req_data.labels = tag
-        // console.log("request: ", req_data)
 
-        // 获取仓库的 issues 列表
-        const { data: issues, headers } = await octokit.issues.listForRepo(req_data)
-        // console.log("issues: ", headers)
+        const now = new Date()
+        const shouldFetchFromGitHub = !repoData ||
+            (now.getTime() - new Date(repoData.updated_at).getTime() > 3600000) // 1 hour in milliseconds
+
+        // console.log("update time,", repoData)
+        // console.log("shouldFetchFromGitHub", shouldFetchFromGitHub, now.getTime(), new Date(repoData.updated_at).getTime())
+
+        if (shouldFetchFromGitHub) {
+            try {
+                const githubRepoInfo = await getGitHubRepoInfo(event, repo_owner, repo_name)
+
+                // console.log("githubRepoInfo, ", githubRepoInfo)
+                try {
+                    // 更新或插入数据库
+                    repoData = await updateOrCreateRepo(event, githubRepoInfo, repoData)
+                } catch (error) {
+                    console.error('Failed to fetch repos from DB, errpr: ', error)
+                }
+            } catch (error) {
+                console.error('Failed to fetch or update repo info:', error)
+            }
+        }
+
+        const { issues, headers } = await getIssuesList(event, repo_owner, repo_name, tag, perPage, page)
         const totalItems = getTotalPages(headers, page) * perPage
+        // console.log("totalItems: ", totalItems, page, perPage)
+        // console.log("repoData: ", repoData)
 
-        // console.log("query:", query, "page:", page, "perPage: ", perPage, "total: ", totalItems, repo_owner, repo_name)
-        // Get total count of issues
-        // console.log("total: ", totalItems)
         return {
-            repo: {
-                name: repoData.name,
-                description: repoData.description,
-                stars: repoData.stargazers_count,
-                forks: repoData.forks_count,
-            },
-            blogPosts: issues.map(issue => ({
-                number: issue.number,
-                title: issue.title,
-                body: issue.body,
-                created_at: issue.created_at,
-                labels: issue.labels,
-                reactions: issue.reactions,
-                comments: issue.comments,
-                html_url: `/repo/${repo_owner}/${repo_name}/blog/${issue.number}`,
-                github_url: issue.html_url,
-                updated_at: issue.updated_at,
-                author: issue.user.login,
-                repo_url: `/repo/${repo_owner}/${repo_name}`,
-                url: issue.html_url
-            })),
+            repo: repoData,
+            blogPosts: issues,
             pagination: {
                 currentPage: page,
                 totalItems: totalItems,
                 perPage: perPage
             }
+
         }
     } catch (error) {
-        console.error('Error fetching data from GitHub:', error)
-        throw createError({
-            statusCode: 500,
-            statusMessage: 'Error fetching data from GitHub'
-        })
+        console.error('Error in blog-posts:', error)
+        throw createError({ statusCode: 500, statusMessage: 'Internal Server Error' })
     }
 })
 

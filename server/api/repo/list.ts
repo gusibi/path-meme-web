@@ -1,6 +1,7 @@
 import { defineEventHandler, getQuery } from 'h3'
+import { getReposList } from '../repos'
 
-const repos = [
+const defaultRepos = [
     {
         name: "path-meme-db",
         description: "一些胡言乱语",
@@ -28,16 +29,28 @@ const repos = [
     // ... 添加更多仓库数据
 ]
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
     const query = getQuery(event)
     const page = parseInt(query.page as string) || 1
     const limit = parseInt(query.limit as string) || 10
 
+    let repos
+    try {
+        // 尝试从 /api/repos/list 获取数据
+        repos = await getReposList(event)
+        if (repos.length == 0) {
+            repos = defaultRepos
+        }
+    } catch (error) {
+        console.error('Failed to fetch repos from API, using default data', error)
+        repos = defaultRepos
+    }
+
+    console.log("repos: ", repos)
     const startIndex = (page - 1) * limit
     const endIndex = page * limit
 
     const paginatedRepos = repos.slice(startIndex, endIndex)
-
     return {
         repos: paginatedRepos,
         totalItems: repos.length,

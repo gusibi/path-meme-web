@@ -37,7 +37,7 @@ const fetchBlogPosts = async (page = 1) => {
 // Fetch initial data
 await fetchBlogPosts()
 
-console.log(totalItems.value, perPage.value, currentPage.value)
+// console.log(totalItems.value, perPage.value, currentPage.value)
 
 // Handle page changes
 const onPageChange = async (page: number) => {

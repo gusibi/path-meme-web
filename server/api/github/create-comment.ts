@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const githubUser = getCookie(event, 'github_username')
     // console.log("github user:", githubUser, "repo:", config.public.repoName, "token:", token)
 
-    if (!token) {
+    if (!token || !githubUser) {
         throw createError({
             statusCode: 401,
             message: 'GitHub token not found'
