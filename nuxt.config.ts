@@ -15,14 +15,14 @@ export default defineNuxtConfig({
         { name: 'format-detection', content: 'telephone=no' },
         {
           name: 'description',
-          content: '古思乱讲 - 一个关于技术、生活和思考的博客 一个简洁、现代的博客系统，灵感来源于 Path 应用的用户界面。它使用 GitHub Issues 作为 CMS，通过 Cloudflare Workers 提供 API 服务，并使用 Cloudflare Pages 进行静态网站托管。特点包括时间线式博客展示、Markdown 渲染、标签分类、反应统计、夜间模式和响应式设计。'
+          content: '古思乱讲 - 一个关于技术、生活和思考的博客 一个简洁、现代的博客系统，灵感来源于 Path 应用的用户界面。它使用 GitHub Issues 作为 CMS，通过 Cloudflare Workers 提供 API 服务，并使用 Cloudflare Pages 进行静态网站托管。特点包括时间线式博客展示、Markdown 渲染、标签分类、反应统计、夜间模式和响应式设计。| A concise, modern blogging system inspired by the Path app. Using GitHub Issues as CMS and Cloudflare for efficient hosting. Features include timeline display, Markdown rendering, and tag categorization'
         },
         // Open Graph
-        { property: 'og:description', content: '古思乱讲 - 一个关于技术、生活和思考的博客 简洁现代的博客系统，使用 GitHub Issues 作为 CMS，提供时间线式展示、Markdown 渲染、标签分类等功能。灵感源自 Path 应用，通过 Cloudflare 技术实现高效托管。' },
+        { property: 'og:description', content: '古思乱讲 - 一个关于技术、生活和思考的博客 简洁现代的博客系统，使用 GitHub Issues 作为 CMS，提供时间线式展示、Markdown 渲染、标签分类等功能。灵感源自 Path 应用，通过 Cloudflare 技术实现高效托管。| A concise, modern blogging system inspired by the Path app. Using GitHub Issues as CMS and Cloudflare for efficient hosting. Features include timeline display, Markdown rendering, and tag categorization' },
         { property: 'og:type', content: 'website' },
         // Twitter Card
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:description', content: '古思乱讲 - 一个关于技术、生活和思考的博客 简洁现代的博客系统，使用 GitHub Issues 作为 CMS，提供时间线式展示、Markdown 渲染、标签分类等功能。灵感源自 Path 应用，通过 Cloudflare 技术实现高效托管。' },
+        { name: 'twitter:description', content: '古思乱讲 - 一个关于技术、生活和思考的博客 简洁现代的博客系统，使用 GitHub Issues 作为 CMS，提供时间线式展示、Markdown 渲染、标签分类等功能。灵感源自 Path 应用，通过 Cloudflare 技术实现高效托管。| A concise, modern blogging system inspired by the Path app. Using GitHub Issues as CMS and Cloudflare for efficient hosting. Features include timeline display, Markdown rendering, and tag categorization' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
