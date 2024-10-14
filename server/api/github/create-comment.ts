@@ -3,7 +3,7 @@ import { Octokit } from '@octokit/rest'
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
     const body = await readBody(event)
-    const { issueNumber, commentText } = body
+    const { issueNumber, repoOwner, repoName, commentText } = body
 
     const token = getCookie(event, 'github_token')
     const githubUser = getCookie(event, 'github_username')
@@ -37,8 +37,8 @@ export default defineEventHandler(async (event) => {
             })
         }
         const response = await octokit.issues.createComment({
-            owner: githubUser, // 使用配置中的仓库所有者
-            repo: config.public.repoName,   // 使用配置中的仓库名称
+            owner: repoOwner, // 使用URL中的仓库所有者
+            repo: repoName,   // 使用URL中的仓库名称
             issue_number: parseInt(issueNumber), // 确保 issue_number 是整数
             body: commentText
         })

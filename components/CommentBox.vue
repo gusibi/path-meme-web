@@ -37,7 +37,6 @@ const isLoggedIn = computed(() => {
   return !!githubToken && !!githubUser && !!user.value
 })
 
-
 const submitComment = async () => {
   if (commentText.value.trim()) {
     try {
@@ -45,6 +44,8 @@ const submitComment = async () => {
         method: 'POST',
         body: {
           issueNumber: route.params.id,
+          repoOwner: route.params.repo_owner,
+          repoName: route.params.repo_name,
           commentText: commentText.value
         }
       })
