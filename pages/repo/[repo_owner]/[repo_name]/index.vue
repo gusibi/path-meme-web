@@ -7,7 +7,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useBannerContentInjection } from '~/composables/useBannerContent'
-const { setBannerContent } = useBannerContentInjection()
+import RepoInfo from '~/components/RepoInfo.vue'
+const { setShowBanner } = useBannerContentInjection()
 const config = useRuntimeConfig()
 import { useRoute } from 'vue-router'
 
@@ -43,6 +44,6 @@ await fetchBlogPosts()
 const onPageChange = async (page: number) => {
     await fetchBlogPosts(page)
 }
-// 设置 banner 内容
-setBannerContent('')
+// Set banner content
+setShowBanner(false)
 </script>

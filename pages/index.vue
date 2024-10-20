@@ -36,7 +36,9 @@ await fetchBlogPosts()
 const onPageChange = async (page: number) => {
   await fetchBlogPosts(page)
 }
-// 设置 banner 内容
-setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">古思乱讲</h1>')
-setBannerImage('/banner2.jpeg')
+onMounted(async () => {
+  // 设置 banner 内容
+  setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">古思乱讲</h1>')
+  // setBannerImage('/banner2.jpeg')
+})
 </script>

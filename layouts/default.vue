@@ -81,13 +81,13 @@
         </div>
       </div>
     </div>
-    <div class="relative h-64 overflow-hidden">
+    <div v-if="showBanner" class="pt-8 relative h-64 overflow-hidden">
       <img class="w-full h-full object-cover blur-sm" :src="bannerImageUrl" alt="Site Banner" />
       <div class="absolute inset-0 flex items-center justify-center dark:bg-black dark:bg-opacity-50">
         <div v-html="bannerContent"></div>
       </div>
     </div>
-    <main class="flex-grow my-8">
+    <main class="flex-grow pt-8 pb-8 ">
       <slot />
     </main>
     <footer class="bg-card-light dark:bg-card-dark py-4">
@@ -112,7 +112,7 @@ import { ref, onMounted, useHead } from '#imports'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const { bannerContent, bannerImageUrl } = useBannerContent()
+const { bannerContent, bannerImageUrl, showBanner } = useBannerContent()
 const nightModeIcon = ref('🌙')
 const mobileMenuOpen = ref(false)
 const mobileFriendLinksOpen = ref(false)

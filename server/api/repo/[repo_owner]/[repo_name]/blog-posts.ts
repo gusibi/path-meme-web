@@ -2,7 +2,7 @@
 
 import { defineEventHandler } from 'h3'
 import { getGitHubRepoInfo } from '../../../github/repos'
-import { getIssuesList } from '../../../github/issues'
+import { getIssuesList, getRepoLabels } from '../../../github/issues'
 import { getRepoById, updateOrCreateRepo } from '../../../repos'
 
 
@@ -34,9 +34,11 @@ export default defineEventHandler(async (event) => {
                 const githubRepoInfo = await getGitHubRepoInfo(event, repo_owner, repo_name)
 
                 // console.log("githubRepoInfo, ", githubRepoInfo)
+                const githubRepoLabels = await getRepoLabels(event, repo_owner, repo_name)
+                // console.log("githubRepoLabels, ", githubRepoLabels)
                 try {
                     // 更新或插入数据库
-                    repoData = await updateOrCreateRepo(event, githubRepoInfo, repoData)
+                    repoData = await updateOrCreateRepo(event, githubRepoInfo, githubRepoLabels, repoData)
                 } catch (error) {
                     console.error('Failed to fetch repos from DB, errpr: ', error)
                     repoData = {
@@ -44,6 +46,7 @@ export default defineEventHandler(async (event) => {
                         description: githubRepoInfo.repo_description || '',
                         stars: githubRepoInfo.stars_count || 0,
                         forks: githubRepoInfo.forks_count || 0,
+                        issues: githubRepoInfo.repo_detail.open_issues || 0,
                         owner_name: githubRepoInfo.repo_owner || '',
                         updated_at: githubRepoInfo.updated_at
                     }

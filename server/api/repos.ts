@@ -5,7 +5,13 @@ interface RepoData {
   name: string;
   description: string;
   stars: number;
+  issues: number;
   forks: number;
+  labels: Array<{
+    name: string,
+    description: string,
+    color: string
+  }>;
   owner_name: string;
   created_at: string;
   updated_at: string;
@@ -58,7 +64,9 @@ export async function getRepoById(event: H3Event, id: string) {
     name: data.repo_name || '',
     description: data.repo_detail.description || '',
     stars: data.repo_detail.stars || 0,
+    issues: data.repo_detail.issues || 0,
     forks: data.repo_detail.forks || 0,
+    labels: data.repo_detail.labels || [],
     owner_name: data.repo_owner || '',
     created_at: data.created_at,
     updated_at: data.updated_at
@@ -92,7 +100,7 @@ export async function createRepo(event: H3Event, repoData: any) {
 }
 
 // repo update or create
-export async function updateOrCreateRepo(event: H3Event, githubRepoData: any, repoData: any) {
+export async function updateOrCreateRepo(event: H3Event, githubRepoData: any, githubRepoLabels: any, repoData: any) {
   const client = await serverSupabaseClient(event)
   // console.log("repoData: ", repoData)
   const repoTab: RepoInfoTab = {
@@ -102,7 +110,9 @@ export async function updateOrCreateRepo(event: H3Event, githubRepoData: any, re
     repo_detail: {
       "stars": githubRepoData.stars_count,
       "forks": githubRepoData.forks_count,
+      "issues": githubRepoData.repo_detail.open_issues,
       "description": githubRepoData.repo_description,
+      "labels": githubRepoLabels,
     },
     rank_score: githubRepoData.stars_count + githubRepoData.forks_count,
     is_show: true,
@@ -131,7 +141,9 @@ export async function updateOrCreateRepo(event: H3Event, githubRepoData: any, re
     description: repoTab.repo_detail.description || '',
     stars: repoTab.repo_detail.stars || 0,
     forks: repoTab.repo_detail.forks || 0,
+    issues: repoTab.repo_detail.issues || 0,
     owner_name: repoTab.repo_owner || '',
+    labels: githubRepoLabels,
     created_at: repoTab.created_at,
     updated_at: repoTab.updated_at
   }

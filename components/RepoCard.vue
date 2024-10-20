@@ -22,7 +22,7 @@
             {{ repo.forks }}
           </span>
         </div>
-        <span class="text-gray-500">Updated {{ formatDate(repo.updated_at) }}</span>
+        <span class="text-gray-500">{{ formatDate(repo.updated_at) }}</span>
       </div>
     </div>
   </div>

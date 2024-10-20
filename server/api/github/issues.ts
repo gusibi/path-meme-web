@@ -48,3 +48,48 @@ export async function getIssuesList(event: H3Event, repo_owner: string, repo_nam
     throw createError({ statusCode: 500, statusMessage: 'Failed to fetch issues from GitHub' })
   }
 }
+
+export async function getRepoLabels(event: H3Event, repo_owner: string, repo_name: string) {
+  const config = useRuntimeConfig()
+  var token = getCookie(event, 'github_token')
+  if (!token) {
+    token = config.private.githubToken
+  }
+  const octokit = new Octokit({ auth: token })
+
+  try {
+    let allLabels: any[] = []
+    let page = 1
+    let hasNextPage = true
+
+    while (hasNextPage) {
+      const { data: labels, headers } = await octokit.issues.listLabelsForRepo({
+        owner: repo_owner,
+        repo: repo_name,
+        per_page: 100,
+        page: page
+      })
+
+      allLabels = allLabels.concat(labels)
+
+      // Check if there's a next page
+      const linkHeader = headers.link
+      hasNextPage = linkHeader && linkHeader.includes('rel="next"')
+      page++
+    }
+
+    // console.log("data: ", allLabels, allLabels.length)
+
+    const formattedLabels = allLabels.map(label => ({
+      id: label.id,
+      name: label.name,
+      description: label.description,
+      color: label.color
+    }))
+
+    return formattedLabels
+  } catch (error) {
+    console.error('GitHub API error:', error)
+    throw createError({ statusCode: 500, statusMessage: 'Failed to fetch labels from GitHub' })
+  }
+}
