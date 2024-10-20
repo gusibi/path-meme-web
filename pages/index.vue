@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useBannerContentInjection } from '~/composables/useBannerContent'
-const { setBannerContent, setBannerImage } = useBannerContentInjection()
+const { setBannerContent, setBannerImage, setShowBanner } = useBannerContentInjection()
 const config = useRuntimeConfig()
 
 const blogPosts = ref([])
@@ -39,6 +39,7 @@ const onPageChange = async (page: number) => {
 onMounted(async () => {
   // 设置 banner 内容
   setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">古思乱讲</h1>')
-  // setBannerImage('/banner2.jpeg')
+  setBannerImage('/banner2.jpeg')
+  setShowBanner(true)
 })
 </script>

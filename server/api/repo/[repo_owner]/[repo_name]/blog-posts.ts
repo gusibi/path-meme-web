@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
     const { repo_owner, repo_name } = event.context.params
     const tag = query.tag as string
 
+    // console.log("repo_name", repo_name)
     try {
         let repoData
         try {
@@ -26,7 +27,7 @@ export default defineEventHandler(async (event) => {
         const shouldFetchFromGitHub = !repoData ||
             (now.getTime() - new Date(repoData.updated_at).getTime() > 3600000) // 1 hour in milliseconds
 
-        // console.log("update time,", repoData)
+        console.log("update time,", repoData)
         // console.log("shouldFetchFromGitHub", shouldFetchFromGitHub, now.getTime(), new Date(repoData.updated_at).getTime())
 
         if (shouldFetchFromGitHub) {
@@ -59,8 +60,12 @@ export default defineEventHandler(async (event) => {
         const { issues, headers } = await getIssuesList(event, repo_owner, repo_name, tag, perPage, page)
         const totalItems = getTotalPages(headers, page) * perPage
         // console.log("totalItems: ", totalItems, page, perPage)
-        // console.log("repoData: ", repoData)
-
+        if (repoData) {
+            repoData = {
+                ...repoData,
+                repo_url: `/repo/${repo_owner}/${repo_name}`
+            }
+        }
         return {
             repo: repoData,
             blogPosts: issues,

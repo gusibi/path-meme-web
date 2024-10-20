@@ -39,11 +39,13 @@
     </main>
 </template>
 <script setup lang="ts">
+import { h, render, createApp } from 'vue'
 import { useAsyncData } from '#app'
 import { useRoute } from 'vue-router'
 import { useSupabaseUser } from '#imports'
 import { useBannerContentInjection } from '~/composables/useBannerContent'
-const { setBannerContent, setBannerImage } = useBannerContentInjection()
+const { setBannerContent, setBannerImage, setShowBanner } = useBannerContentInjection()
+import PostRepoInfo from '~/components/PostRepoInfo.vue'
 
 const user = useSupabaseUser()
 
@@ -126,23 +128,26 @@ const handleCommentSubmission = async (newComment: any) => {
 }
 
 if (post.value) {
-    setBannerContent(`
-    <div class="text-center text-white">
-      <div class="mb-2">
-        <a href="/repo/${route.params.repo_owner}/${route.params.repo_name}" class="underline decoration-sky-500 text-base font-semibold hover:underline">
-          ${route.params.repo_owner}/${route.params.repo_name}
-        </a>
-      </div>
-      <h1 class="text-3xl font-extrabold mb-4 ">${post.value.title}</h1>
-      <div class="flex items-center justify-center">
-        <img src="${post.value.avatar_url}" alt="${post.value.author}" class="w-10 h-10 rounded-full mr-3">
-        <div class="text-left">
-          <div class="font-medium">${post.value.author}</div>
-          <div class="text-sm opacity-75">${formatDate(post.value.created_at)}</div>
-        </div>
-      </div>
-    </div>
-  `)
+    const app = createApp({
+        render() {
+            return h(PostRepoInfo, {
+                repoOwner: route.params.repo_owner,
+                repoName: route.params.repo_name,
+                title: post.value.title,
+                avatarUrl: post.value.avatar_url,
+                author: post.value.author,
+                createdAt: post.value.created_at
+            })
+        }
+    })
+    const container = document.createElement('div')
+    app.mount(container)
+    // 使用 nextTick 确保组件已经渲染
+    nextTick(() => {
+        setBannerContent(container.innerHTML)
+        app.unmount()
+    })
     setBannerImage('/banner3.jpeg')
+    setShowBanner(true)
 }
 </script>

@@ -25,7 +25,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBannerContentInjection } from '~/composables/useBannerContent'
 
-const { setBannerContent, setBannerImage } = useBannerContentInjection()
+const { setBannerContent, setBannerImage, setShowBanner } = useBannerContentInjection()
 const repos = ref([])
 const router = useRouter()
 const repoInput = ref('')
@@ -49,4 +49,5 @@ repos.value = reposData.value.repos || []
 // 设置 banner 内容
 setBannerContent('<h1 class="text-4xl font-extrabold text-center text-white mb-6">Explore, Learn, and Engage</h1>')
 setBannerImage("/repo-banner.jpeg")
+setShowBanner(true)
 </script>

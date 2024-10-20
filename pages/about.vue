@@ -43,7 +43,7 @@ import { useAsyncData } from '#app'
 import { useRoute } from 'vue-router'
 import { useSupabaseUser } from '#imports'
 import { useBannerContentInjection } from '~/composables/useBannerContent'
-const { setBannerContent, setBannerImage } = useBannerContentInjection()
+const { setBannerContent, setBannerImage, setShowBanner } = useBannerContentInjection()
 
 const user = useSupabaseUser()
 
@@ -139,5 +139,6 @@ if (post.value) {
   </div>
 `)
   setBannerImage('/banner3.jpeg')
+  setShowBanner(true)
 }
 </script>

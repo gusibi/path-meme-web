@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-card-light dark:bg-card-dark shadow-md pt-16 p-6 mb-8 w-full text-center">
+  <div class="w-full pt-16">
     <!-- Labels row -->
-    <div class="flex items-center justify-center mb-4 relative">
+    <div class="flex items-center justify-center relative">
       <button @click="scrollLabels('left')" class="absolute left-0 bg-white dark:bg-gray-800 bg-opacity-75 p-1 rounded-full shadow-md z-10" v-show="showLeftArrow">
         <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
@@ -21,9 +21,12 @@
       </button>
     </div>
     <!-- Repo name -->
-    <h2 class="text-4xl pt-8 font-bold text-gray-900 dark:text-white mb-2">{{ repo.owner_name }}/{{ repo.name }}</h2>
+    <h2 class="text-4xl pt-8 text-center font-bold mb-2">
+      <a :href="repo.repo_url" class="hover:underline">
+        {{ repoOwner }}/{{ repoName }} </a>
+    </h2>
     <!-- Stars and Issues count -->
-    <div class="flex items-center justify-center space-x-4 text-m text-gray-600  py-2 dark:text-gray-400 mb-2">
+    <div class="flex items-center justify-center space-x-4 text-m text-gray-600 py-2 dark:text-gray-400 mb-2">
       <span class="flex items-center">
         <svg class="w-5 h-5 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -42,6 +45,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { NuxtLink } from '#components'
 import { ref, onMounted, watch, nextTick } from 'vue'
 
 const props = defineProps({
