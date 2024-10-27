@@ -81,7 +81,7 @@
         </div>
       </div>
     </div>
-    <div v-if="showBanner" class="pt-12 relative h-64 overflow-hidden w-full">
+    <div v-if="showBanner" class="pt-12 relative h-72 overflow-hidden w-full">
       <img class="w-full h-full object-cover blur-sm" :src="bannerImageUrl" alt="Site Banner" />
       <div class="absolute inset-0 flex items-center justify-center dark:bg-black dark:bg-opacity-50">
         <div class="w-full max-w-screen-xl mx-auto px-4">

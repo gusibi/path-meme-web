@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
         const shouldFetchFromGitHub = !repoData ||
             (now.getTime() - new Date(repoData.updated_at).getTime() > 3600000) // 1 hour in milliseconds
 
-        console.log("update time,", repoData)
+        // console.log("update time,", repoData)
         // console.log("shouldFetchFromGitHub", shouldFetchFromGitHub, now.getTime(), new Date(repoData.updated_at).getTime())
 
         if (shouldFetchFromGitHub) {

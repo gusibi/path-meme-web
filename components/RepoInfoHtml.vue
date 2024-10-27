@@ -41,7 +41,9 @@
         {{ repo.issues }} issues </span>
     </div>
     <!-- Repo description -->
-    <p class="text-gray-600 text-m pb-4 dark:text-gray-300">{{ repo.description }}</p>
+    <div class="flex items-center justify-center space-x-4 text-m text-gray-600 py-2 dark:text-gray-400 mb-2">
+      <p class="justify-center text-gray-600 text-m pb-4 dark:text-gray-300">{{ repo.description }}</p>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
