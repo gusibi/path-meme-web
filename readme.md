@@ -10,7 +10,7 @@ Path Meme is a clean, modern blogging system inspired by the Path app's user int
 - Repository: [https://github.com/gusibi/path-momo-web](https://github.com/gusibi/path-momo-web)
 - Demo: [https://momo.gusibi.mobi](https://momo.gusibi.mobi)
 
-![Project Preview](image-10.png)
+![project preview](image-11.png)
 
 ## Features
 
