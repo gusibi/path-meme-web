@@ -23,6 +23,7 @@ export default defineNuxtConfig({
         // Twitter Card
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:description', content: '古思乱讲 - 一个关于技术、生活和思考的博客 简洁现代的博客系统，使用 GitHub Issues 作为 CMS，提供时间线式展示、Markdown 渲染、标签分类等功能。灵感源自 Path 应用，通过 Cloudflare 技术实现高效托管。| A concise, modern blogging system inspired by the Path app. Using GitHub Issues as CMS and Cloudflare for efficient hosting. Features include timeline display, Markdown rendering, and tag categorization' },
+        { name: 'google-site-verification', content: 'mK8IcUVJNhs8X6Fwy-cJCB9AEIqxFbLOsKvynUoqa3Y' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

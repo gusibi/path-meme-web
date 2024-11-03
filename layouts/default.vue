@@ -209,7 +209,6 @@ useHead({
   },
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    { name: 'google-site-verification', content: 'mK8IcUVJNhs8X6Fwy-cJCB9AEIqxFbLOsKvynUoqa3Y' },
     // { name: 'description', content: config.public.siteDescription },
     { name: 'format-detection', content: 'telephone=no' },
     { property: 'og:site_name', content: config.public.siteTitle },
