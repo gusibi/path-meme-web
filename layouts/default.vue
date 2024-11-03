@@ -214,6 +214,7 @@ useHead({
     { property: 'og:site_name', content: config.public.siteTitle },
     { property: 'og:type', content: 'website' },
     { name: 'twitter:site', content: config.public.twitterHandle },
+    { name: 'google-site-verification', content: 'mK8IcUVJNhs8X6Fwy-cJCB9AEIqxFbLOsKvynUoqa3Y' },
   ],
   link: [
     { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
