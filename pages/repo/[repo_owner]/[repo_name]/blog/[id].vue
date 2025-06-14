@@ -84,13 +84,13 @@ useHead(() => ({
         { property: 'og:title', content: post.value?.title },
         { property: 'og:description', content: truncatedBody(post.value?.body, 160) },
         { property: 'og:type', content: 'article' },
-        { property: 'og:url', content: `https://momo.gusibi.mobi/blog/${route.params.id}` },
+        { property: 'og:url', content: `https://momo.gusibi.site/blog/${route.params.id}` },
         // Twitter Card
         { name: 'twitter:title', content: post.value?.title },
         { name: 'twitter:description', content: truncatedBody(post.value?.body, 160) },
     ],
     link: [
-        { rel: 'canonical', href: `https://momo.gusibi.mobi/blog/${route.params.id}` }
+        { rel: 'canonical', href: `https://momo.gusibi.site/blog/${route.params.id}` }
     ],
 }))
 

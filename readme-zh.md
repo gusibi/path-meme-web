@@ -9,7 +9,7 @@ Path Meme 是一个简洁、现代的博客系统，灵感来源于 Path 应用�
 
 **项目链接：**
 - 代码仓库：[https://github.com/gusibi/path-momo-web](https://github.com/gusibi/path-momo-web)
-- 在线演示：[https://momo.gusibi.mobi](https://momo.gusibi.mobi)
+- 在线演示：[https://momo.gusibi.site](https://momo.gusibi.site)
 
 ![项目预览](image-10.png)
 
@@ -47,14 +47,14 @@ Path Meme 是一个简洁、现代的博客系统，灵感来源于 Path 应用�
    - 选择 "Create application" -> "Pages"
    - 连接 GitHub 并选择已 Fork 的项目
    - 配置部署命令和目录
-   
+
    ![Cloudflare Pages 配置](image-1.png)
 
 3. **配置 Supabase**
    - 创建 Supabase 项目
    - 启用 GitHub 登录
    - 配置 OAuth 回调 URL
-   
+
    ![Supabase GitHub 配置](image-3.png)
    ![Supabase 回调 URL](image-4.png)
 
@@ -62,14 +62,14 @@ Path Meme 是一个简洁、现代的博客系统，灵感来源于 Path 应用�
    - 访问 GitHub 开发者设置：https://github.com/settings/developers
    - 创建新的 OAuth App
    - 设置回调 URL 和主页 URL
-   
+
    ![GitHub OAuth 配置](image-5.png)
 
 5. **配置环境变量**
    - 在 Cloudflare Pages 设置中添加环境变量：
      - `SUPABASE_URL`
      - `SUPABASE_KEY`
-   
+
    ![Cloudflare 环境变量](image-7.png)
 
 ### 本地开发

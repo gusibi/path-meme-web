@@ -29,9 +29,8 @@
                 </svg>
               </button>
               <div class="absolute right-0 mt-2 w-48 bg-white bg-opacity-80 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                <a href="https://blog.gusibi.mobi" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">古思乱想</a>
-                <a href="https://imageguardai.gusibi.mobi" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ImageGuardAI</a>
-                <a href="https://watermark.gusibi.mobi" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">watermark</a>
+                <a href="https://blog.gusibi.site" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">古思乱想</a>
+                <a href="https://onlinestool.com" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">OnlinesTool</a>
               </div>
             </div>
           </div>
@@ -74,9 +73,8 @@
             </svg>
           </button>
           <div v-if="mobileFriendLinksOpen" class="ml-7 mt-2">
-            <a href="https://blog.gusibi.mobi" class="block text-white py-1">古思乱想</a>
-            <a href="https://imageguardai.gusibi.mobi" class="block text-white py-1">ImageGuardAI</a>
-            <a href="https://watermark.gusibi.mobi" class="block text-white py-1">watermark</a>
+            <a href="https://blog.gusibi.site" class="block text-white py-1">古思乱想</a>
+            <a href="https://onlinestool.com" class="block text-white py-1">OnlinesTool</a>
           </div>
         </div>
       </div>
@@ -95,7 +93,7 @@
     <footer class="bg-card-light dark:bg-card-dark py-4">
       <div class="max-w-content mx-auto px-4 text-center">
         <div class="mb-2">
-          <a href="https://momo.gusibi.mobi" class="mr-4 hover:underline">本站地址</a>
+          <a href="https://momo.gusibi.site" class="mr-4 hover:underline">本站地址</a>
           <a href="/sitemap.xml" class="mr-4 hover:underline">SiteMap</a>
         </div>
         <div class="text-sm text-gray-500">Design by <a href="https://github.com/gusibi/path-meme-web">gusibi@path-meme</a></div>

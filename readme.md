@@ -8,7 +8,7 @@ Path Meme is a clean, modern blogging system inspired by the Path app's user int
 
 **Project Links:**
 - Repository: [https://github.com/gusibi/path-momo-web](https://github.com/gusibi/path-momo-web)
-- Demo: [https://momo.gusibi.mobi](https://momo.gusibi.mobi)
+- Demo: [https://momo.gusibi.site](https://momo.gusibi.site)
 
 ![project preview](image-11.png)
 
@@ -46,14 +46,14 @@ Path Meme is a clean, modern blogging system inspired by the Path app's user int
    - Select "Create application" -> "Pages"
    - Connect GitHub and select your forked project
    - Configure deployment commands and directory
-   
+
    ![Cloudflare Pages Configuration](image-1.png)
 
 3. **Set up Supabase**
    - Create a Supabase project
    - Enable GitHub authentication
    - Configure OAuth callback URL
-   
+
    ![Supabase GitHub Configuration](image-3.png)
    ![Supabase Callback URL](image-4.png)
 
@@ -61,14 +61,14 @@ Path Meme is a clean, modern blogging system inspired by the Path app's user int
    - Go to GitHub developer settings: https://github.com/settings/developers
    - Create a new OAuth App
    - Set callback URL and homepage URL
-   
+
    ![GitHub OAuth Configuration](image-5.png)
 
 5. **Set Environment Variables**
    - Add environment variables in Cloudflare Pages settings:
      - `SUPABASE_URL`
      - `SUPABASE_KEY`
-   
+
    ![Cloudflare Environment Variables](image-7.png)
 
 ### Local Development
