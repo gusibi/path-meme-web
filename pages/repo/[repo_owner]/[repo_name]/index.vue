@@ -45,12 +45,10 @@
 
     <!-- Timeline Content -->
     <RepoTimeline 
-      :blog-posts="blogPosts" 
-      :current-page="currentPage" 
-      :total-items="totalItems" 
-      :per-page="perPage" 
-      :loading="loading"
-      @load-more="onLoadMore" 
+      ref="repoTimeline"
+      :repo-owner="repoOwner"
+      :repo-name="repoName"
+      :data-key="`repo-${repoOwner}-${repoName}`"
     />
 
     <!-- Floating Action Button -->
@@ -59,45 +57,25 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-
 const route = useRoute()
-const config = useRuntimeConfig()
 
-const blogPosts = ref([])
-const repoInfo = ref<any>({})
-const currentPage = ref(1)
-const totalItems = ref(0)
-const perPage = ref(parseInt(config.public.perPageSize) || 20)
-const loading = ref(false)
+const repoOwner = computed(() => route.params.repo_owner as string)
+const repoName = computed(() => route.params.repo_name as string)
 
-const fetchBlogPosts = async (page = 1, append = false) => {
-  loading.value = true
-  try {
-    const { data: fetchedData } = await useAsyncData(`blogPosts-${page}`, () =>
-      $fetch(`/api/repo/${route.params.repo_owner}/${route.params.repo_name}/blog-posts`, {
-        params: { page, perPage: perPage.value }
-      })
-    )
-
-    repoInfo.value = fetchedData.value?.repo || {}
-    if (append) {
-      blogPosts.value = [...blogPosts.value, ...(fetchedData.value?.blogPosts || [])]
-    } else {
-      blogPosts.value = fetchedData.value?.blogPosts || []
-    }
-    totalItems.value = fetchedData.value?.pagination.totalItems || 0
-    perPage.value = fetchedData.value?.pagination.perPage || 20
-    currentPage.value = page
-  } finally {
-    loading.value = false
-  }
+interface RepoInfo {
+  description?: string
+  stars?: number
+  forks?: number
 }
 
-await fetchBlogPosts()
+const repoTimeline = ref<{ totalItems: number } | null>(null)
 
-const onLoadMore = async () => {
-  const nextPage = currentPage.value + 1
-  await fetchBlogPosts(nextPage, true)
-}
+// 获取 repo 信息
+const { data: repoData } = await useAsyncData(`repo-info-${repoOwner.value}-${repoName.value}`, () =>
+  $fetch(`/api/repo/${repoOwner.value}/${repoName.value}/blog-posts`, {
+    params: { page: 1, perPage: 1 }
+  })
+)
+
+const repoInfo = computed<RepoInfo>(() => (repoData.value as any)?.repo || {})
 </script>
