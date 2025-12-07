@@ -1,46 +1,102 @@
 <template>
-  <div class="container max-w-content mx-auto px-4">
-    <div class="space-y-8">
-      <article v-for="post in blogPosts" class="bg-card-light dark:bg-card-dark rounded-lg shadow-xl overflow-hidden">
-        <div class="px-6">
-          <div class="pt-4 flex justify-between items-center text-sm">
-            <div class="flex items-center space-x-4">
-              <PostLabels :labels="post.labels" :repo-url="post.repo_url" />
-            </div>
-            <div class="flex items-center space-x-4">
-              <PostReactions :reactions="post.reactions" class="" />
-            </div>
+  <div class="max-w-content mx-auto pb-8 px-4 relative">
+    <!-- The Vertical Line (Desktop only) -->
+    <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-path-line dark:bg-path-lineDark -z-10 hidden sm:block"></div>
+
+    <!-- Posts -->
+    <div class="space-y-6">
+      <article 
+        v-for="(post, index) in blogPosts" 
+        :key="post.id"
+        class="relative pl-0 sm:pl-12 group transition-transform hover:-translate-y-1 duration-200"
+      >
+        <!-- Timeline Dot (Desktop only) -->
+        <div 
+          class="absolute left-[27px] top-6 w-3 h-3 rounded-full border-2 border-path-bg dark:border-path-dark shadow-sm z-10 hidden sm:block"
+          :style="{ backgroundColor: getLabelColor(post.labels) }"
+        ></div>
+
+        <!-- Timestamp Floating (Desktop only) -->
+        <div class="absolute -left-20 top-5 w-24 text-right pr-4 hidden sm:block">
+          <span class="text-xs font-bold text-path-subtle font-sans">
+            {{ formatDateShort(post.created_at) }}
+          </span>
+          <div class="text-[10px] text-gray-400 dark:text-gray-600">
+            {{ formatTime(post.created_at) }}
           </div>
-          <div class="py-3">
-            <h1 v-if="!isMemePost(post.labels)" class="text-xl font-medium">
-              <NuxtLink :to="`${post.html_url}`" class="hover:underline">{{ post.title }}</NuxtLink>
-            </h1>
-            <div class="pt-4 prose dark:prose-invert max-w-none" v-html="$md(truncatedBody(post.body))" />
+        </div>
+
+        <!-- Card -->
+        <div class="bg-white dark:bg-path-cardDark rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden relative">
+          
+          <!-- Mobile Header (Date) -->
+          <div class="sm:hidden px-4 pt-3 flex items-center text-xs text-path-subtle font-bold uppercase tracking-wider">
+            {{ formatDateMobile(post.created_at) }}
           </div>
-          <!-- 底部信息栏 -->
-          <div class="pb-6 pt-3 flex justify-between items-center text-sm">
-            <!-- 左下角 GitHub 链接 -->
-            <div class="flex items-center space-x-4">
-              <a class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" :href="post.github_url" target="_blank">🔗</a>
-              <span class="text-gray-500 dark:text-gray-400">{{ formatDate(post.created_at, false) }}</span>
+
+          <!-- Clickable Area for Detail -->
+          <NuxtLink :to="post.html_url" class="block cursor-pointer">
+            <div class="p-5">
+              <!-- Labels / Tags -->
+              <div class="flex flex-wrap items-center gap-2 mb-3">
+                <PostLabels :labels="post.labels" :repo-url="post.repo_url" />
+              </div>
+
+              <!-- Title -->
+              <h2 
+                v-if="!isMemePost(post.labels)" 
+                class="text-xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-2 leading-tight hover:text-path-red transition-colors"
+              >
+                {{ post.title }}
+              </h2>
+
+              <!-- Body Preview -->
+              <div class="prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 line-clamp-3" v-html="$md(truncatedBody(post.body))" />
             </div>
-            <div class="flex items-center space-x-4">
+          </NuxtLink>
+
+          <!-- Footer -->
+          <div class="bg-gray-50 dark:bg-black/20 px-5 py-3 flex items-center justify-between border-t border-gray-100 dark:border-gray-800">
+            <div class="flex items-center gap-4 text-gray-400 text-xs font-medium">
+              <PostReactions :reactions="post.reactions" />
+            </div>
+            <div class="flex items-center gap-3">
               <CommentButton :post-number="post.number" :repo-url="post.repo_url" :comment-count="post.comments || 0" />
               <ShareButton :post="post" :repo-url="post.repo_url" :card-selector="`[data-post-id='${post.number}']`" />
+              <a 
+                :href="post.github_url" 
+                target="_blank"
+                class="text-gray-400 hover:text-path-red transition-colors"
+                title="View on GitHub"
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>
       </article>
+
+      <!-- Loading Indicator -->
+      <div v-if="loading" class="flex justify-center py-8">
+        <div class="w-6 h-6 border-2 border-path-red border-t-transparent rounded-full animate-spin"></div>
+      </div>
     </div>
-    <Pagination :current-page="currentPage" :total-items="totalItems" :per-page="perPage" @page-change="onPageChange" />
+
+    <!-- Pagination -->
+    <Pagination 
+      :current-page="currentPage" 
+      :total-items="totalItems" 
+      :per-page="perPage" 
+      @page-change="onPageChange" 
+    />
   </div>
-  <!-- <ShareModal :post="selectedPost" :is-open="isShareModalOpen" @close="closeShareModal" /> -->
 </template>
+
 <script setup lang="ts">
 import { ref } from 'vue'
-import ShareModal from '~/components/ShareButton.vue'
 import Pagination from '~/components/Pagination.vue'
-
 
 interface BlogPost {
   id: number
@@ -51,6 +107,8 @@ interface BlogPost {
   reactions: Record<string, number>
   comments: number
   html_url: string
+  github_url: string
+  repo_url: string
   labels: Array<{ color: string; name: string }>
 }
 
@@ -71,6 +129,10 @@ const props = defineProps({
   perPage: {
     type: Number,
     required: true
+  },
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -80,64 +142,52 @@ const onPageChange = (page: number) => {
   emit('pageChange', page)
 }
 
-const selectedPost = ref<BlogPost | null>(null)
-const isShareModalOpen = ref(false)
-
-const openShareModal = (post: BlogPost) => {
-  selectedPost.value = post
-  isShareModalOpen.value = true
-}
-
-const closeShareModal = () => {
-  isShareModalOpen.value = false
-  selectedPost.value = null
-}
-
-const formatDate = (dateString: string, showYear = false) => {
+const formatDateShort = (dateString: string) => {
   const date = new Date(dateString)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  return `${months[date.getMonth()]} ${date.getDate()}`
+}
 
-  if (showYear) {
-    return `${year}-${month}-${day} ${hours}:${minutes}`
-  } else {
-    return `${month}-${day} ${hours}:${minutes}`
-  }
+const formatTime = (dateString: string) => {
+  const date = new Date(dateString)
+  const hours = date.getHours()
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+  const hour12 = hours % 12 || 12
+  return `${hour12}:${minutes} ${ampm}`
+}
+
+const formatDateMobile = (dateString: string) => {
+  const date = new Date(dateString)
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const hours = date.getHours()
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+  const hour12 = hours % 12 || 12
+  return `${months[date.getMonth()]} ${date.getDate()} • ${hour12}:${minutes} ${ampm}`
 }
 
 const truncatedBody = (post: string) => {
-  if (!post) {
-    return ""
-  }
-  const maxLength = 400;
-  if (post.length <= maxLength) {
-    return post;
-  }
-  return post.slice(0, maxLength).trim() + '...';
-}
-
-const renderLabels = (labels: Array<{ color: string; name: string }>) => {
-  return labels.map(label => ({
-    color: `#${label.color}`,
-    name: label.name,
-    displayName: label.name.length > 10 ? label.name.substring(0, 10) + '...' : label.name
-  }))
+  if (!post) return ""
+  const maxLength = 300
+  if (post.length <= maxLength) return post
+  return post.slice(0, maxLength).trim() + '...'
 }
 
 const getLabelColor = (labels: Array<{ color: string }>) => {
-  return labels.length > 0 ? `#${labels[0].color}` : '#ccc'
-}
-
-const getFirstLabelChar = (labels: Array<{ name: string }>) => {
-  return labels.length > 0 ? labels[0].name.charAt(0) : '•'
+  return labels.length > 0 ? `#${labels[0].color}` : '#3b82f6'
 }
 
 const isMemePost = (labels: Array<{ name: string }>): boolean => {
   return labels.some(label => label.name.toLowerCase() === 'meme')
 }
-
-
 </script>
+
+<style scoped>
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

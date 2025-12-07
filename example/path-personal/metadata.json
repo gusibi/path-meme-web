@@ -1,0 +1,5 @@
+{
+  "name": "Path Personal",
+  "description": "A personal timeline and diary application replicating the classic Path design, backed by GitHub Issues logic.",
+  "requestFramePermissions": []
+}
