@@ -50,7 +50,7 @@
       :total-items="totalItems" 
       :per-page="perPage" 
       :loading="loading"
-      @page-change="onPageChange" 
+      @load-more="onLoadMore" 
     />
 
     <!-- Floating Action Button -->
@@ -71,20 +71,24 @@ const totalItems = ref(0)
 const perPage = ref(parseInt(config.public.perPageSize) || 20)
 const loading = ref(false)
 
-const fetchBlogPosts = async (page = 1) => {
+const fetchBlogPosts = async (page = 1, append = false) => {
   loading.value = true
   try {
-    const { data: fetchedData } = await useAsyncData('blogPosts', () =>
+    const { data: fetchedData } = await useAsyncData(`blogPosts-${page}`, () =>
       $fetch(`/api/repo/${route.params.repo_owner}/${route.params.repo_name}/blog-posts`, {
         params: { page, perPage: perPage.value }
       })
     )
 
     repoInfo.value = fetchedData.value?.repo || {}
-    blogPosts.value = fetchedData.value?.blogPosts || []
+    if (append) {
+      blogPosts.value = [...blogPosts.value, ...(fetchedData.value?.blogPosts || [])]
+    } else {
+      blogPosts.value = fetchedData.value?.blogPosts || []
+    }
     totalItems.value = fetchedData.value?.pagination.totalItems || 0
     perPage.value = fetchedData.value?.pagination.perPage || 20
-    currentPage.value = fetchedData.value?.pagination.currentPage || 1
+    currentPage.value = page
   } finally {
     loading.value = false
   }
@@ -92,8 +96,8 @@ const fetchBlogPosts = async (page = 1) => {
 
 await fetchBlogPosts()
 
-const onPageChange = async (page: number) => {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-  await fetchBlogPosts(page)
+const onLoadMore = async () => {
+  const nextPage = currentPage.value + 1
+  await fetchBlogPosts(nextPage, true)
 }
 </script>

@@ -1,84 +1,94 @@
 <template>
-    <div ref="mobilePreview" class="mobile-preview w-[390px] min-h-[400px] font-sans bg-gradient-to-br from-red-200 to-purple-300 flex flex-col items-center p-4">
-        <!-- <div class="justify-center text-center p-2 text-2xl text-gray-600 dark:text-gray-400">古思乱讲</div> -->
-        <div class="w-full max-w-sm bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden mb-4">
-            <div class="p-6">
-                <h2 v-if="!isMemePost(post.labels)" class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{{ post.title || 'No Title' }}</h2>
-                <div class="flex justify-between items-center">
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        {{ formatDate(post.created_at) }}
-                    </div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        <PostLabels :labels="post.labels" />
-                    </div>
-                </div>
-                <div class="prose dark:prose-invert max-w-none mb-4" v-html="$md(post.body || 'No Content')"></div>
-                <div class="flex justify-between items-center">
-                    <PostReactions :reactions="post.reactions" class="" />
-                    <CommentButton :post-number="post.number" :comment-count="getCommentCount(post.comments) || 0" />
-                </div>
-            </div>
+  <div 
+    ref="mobilePreview" 
+    class="bg-[#FBF8F5] p-6 shadow-xl rounded-sm w-full relative"
+    style="min-height: 300px;"
+  >
+    <!-- Paper Texture/Style Header -->
+    <div class="flex items-center gap-3 mb-4">
+      <img 
+        :src="post.author_avatar || 'https://github.com/github.png'" 
+        class="w-12 h-12 rounded-full border-2 border-white shadow-sm" 
+        crossorigin="anonymous" 
+        alt="Avatar"
+      />
+      <div>
+        <div class="font-bold text-gray-800 text-lg font-serif">{{ post.author || 'Anonymous' }}</div>
+        <div class="text-xs text-gray-500 uppercase tracking-widest font-bold">
+          {{ formatDate(post.created_at) }}
         </div>
-        <div class="flex flex-col items-center p-2">
-            <QRCode :value="postUrl" :size="60" level="M" render-as="svg" :margin="0" class="rounded-md overflow-hidden" />
-        </div>
-        <div class="justify-center text-center text-xs text-slate-400 dark:text-gray-400">古思乱讲：{{ postUrl }} </div>
+      </div>
     </div>
+
+    <!-- Title -->
+    <h2 
+      v-if="post.title && !isMemePost(post.labels)" 
+      class="text-2xl font-serif font-bold text-path-red mb-3 leading-tight"
+    >
+      {{ post.title }}
+    </h2>
+
+    <!-- Body Content -->
+    <div 
+      class="prose prose-sm prose-p:text-gray-700 prose-headings:text-gray-800 font-serif mb-8 line-clamp-10" 
+      v-html="$md(truncatedBody(post.body))"
+    />
+
+    <!-- Footer -->
+    <div class="border-t border-gray-200 pt-3 flex justify-between items-center mt-auto">
+      <span class="font-sans font-bold text-gray-400 text-xs tracking-widest">PATH MEME</span>
+      <div class="w-4 h-4 rounded-full bg-path-red"></div>
+    </div>
+  </div>
 </template>
+
 <script setup lang="ts">
-import { defineProps, ref, onMounted, watch, computed } from 'vue'
-import QRCode from 'qrcode.vue'
+import { ref, computed } from 'vue'
 import { useRuntimeConfig } from '#app'
+
 const config = useRuntimeConfig()
 
 const props = defineProps({
-    post: {
-        type: Object,
-        required: true
-    }
+  post: {
+    type: Object,
+    required: true
+  }
 })
 
-const mobilePreview = ref(null)
+const mobilePreview = ref<HTMLElement | null>(null)
 
 const postUrl = computed(() => {
-    return `${config.public.siteUrl}/blog/${props.post.number}`
+  return `${config.public.siteUrl}/blog/${props.post.number}`
 })
 
 const isMemePost = (labels: Array<{ name: string }>): boolean => {
-    return labels.some(label => label.name.toLowerCase() === 'meme')
+  if (!labels) return false
+  return labels.some(label => label.name.toLowerCase() === 'meme')
 }
-
-onMounted(() => {
-    // console.log('MobilePostPreview mounted, post data:', props.post)
-})
-
-watch(() => props.post, (newValue) => {
-    // console.log('Post data changed:', newValue)
-}, { deep: true })
 
 const formatDate = (dateString: string) => {
-    if (!dateString) return 'No Date'
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
 }
 
-const getCommentCount = (comments: Array<{
-    id: number
-    user: { login: string }
-    created_at: string
-    body: string
-}> | undefined): number => {
-    if (comments && comments.length > 0) {
-        return comments.length
-    }
-    return 0
+const truncatedBody = (body: string) => {
+  if (!body) return ''
+  const maxLength = 500
+  if (body.length <= maxLength) return body
+  return body.slice(0, maxLength).trim() + '...'
 }
-
 
 defineExpose({ mobilePreview })
 </script>
+
 <style scoped>
-.mobile-preview {
-    width: 390px;
+.line-clamp-10 {
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  line-clamp: 10;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

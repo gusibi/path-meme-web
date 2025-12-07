@@ -17,12 +17,9 @@
 
     <!-- Timeline Content -->
     <RepoTimeline 
-      :blog-posts="blogPosts" 
-      :current-page="currentPage" 
-      :total-items="totalItems" 
-      :per-page="perPage" 
-      :loading="loading"
-      @page-change="onPageChange" 
+      :repo-owner="config.public.repoOwner" 
+      :repo-name="config.public.repoName"
+      data-key="indexPosts"
     />
 
     <!-- Floating Action Button -->
@@ -31,40 +28,5 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
 const config = useRuntimeConfig()
-
-const blogPosts = ref([])
-const currentPage = ref(1)
-const totalItems = ref(0)
-const perPage = ref(parseInt(config.public.perPageSize) || 20)
-const loading = ref(false)
-
-const fetchBlogPosts = async (page = 1) => {
-  loading.value = true
-  try {
-    const { data: fetchedData } = await useAsyncData('blogPosts', () =>
-      $fetch(`/api/repo/${config.public.repoOwner}/${config.public.repoName}/blog-posts`, {
-        params: { page, perPage: perPage.value }
-      })
-    )
-
-    blogPosts.value = fetchedData.value?.blogPosts || []
-    totalItems.value = fetchedData.value?.pagination.totalItems || 0
-    perPage.value = fetchedData.value?.pagination.perPage || 20
-    currentPage.value = fetchedData.value?.pagination.currentPage || 1
-  } finally {
-    loading.value = false
-  }
-}
-
-// Fetch initial data
-await fetchBlogPosts()
-
-// Handle page changes
-const onPageChange = async (page: number) => {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-  await fetchBlogPosts(page)
-}
 </script>

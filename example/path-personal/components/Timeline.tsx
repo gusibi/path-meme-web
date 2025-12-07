@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { Post, PostType } from '../types';
-import { Clock, MessageCircle, Lock, MoreHorizontal, Sun, Moon, Hash, ArrowLeft } from 'lucide-react';
+import { Clock, MessageCircle, Lock, MoreHorizontal, Sun, Moon, Hash, ArrowLeft, ArrowDown } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface TimelineProps {
@@ -15,11 +15,12 @@ interface TimelineProps {
   selectedTag: string | null;
   onClearTag: () => void;
   onTagClick: (tag: string) => void;
+  onOpenTags: () => void;
 }
 
 const Timeline: React.FC<TimelineProps> = ({ 
   posts, onLoadMore, onRefresh, onPostClick, loading, hasMore,
-  isDarkMode, toggleTheme, selectedTag, onClearTag, onTagClick
+  isDarkMode, toggleTheme, selectedTag, onClearTag, onTagClick, onOpenTags
 }) => {
   const observer = useRef<IntersectionObserver | null>(null);
   const lastPostRef = useCallback((node: HTMLDivElement) => {
@@ -65,12 +66,12 @@ const Timeline: React.FC<TimelineProps> = ({
       onTouchEnd={handleTouchEnd}
     >
       {/* Fixed Red Glass Header */}
-      <header className="fixed top-0 left-0 right-0 h-14 sm:h-16 bg-path-red/90 dark:bg-path-red/80 backdrop-blur-md z-50 shadow-sm border-b border-white/10 px-4 flex items-center justify-between text-white transition-all">
-          <div className="flex items-center w-12">
+      <header className="fixed top-0 left-0 right-0 h-14 sm:h-16 bg-path-red/90 dark:bg-path-red/80 backdrop-blur-md z-40 shadow-sm border-b border-white/10 px-4 flex items-center justify-between text-white transition-all">
+          <div className="flex items-center w-20">
             {selectedTag && (
               <button 
                 onClick={onClearTag} 
-                className="p-2 -ml-2 hover:bg-white/20 rounded-full transition-colors"
+                className="p-2 -ml-2 hover:bg-white/20 rounded-full transition-colors mr-1"
                 aria-label="Back to feed"
               >
                 <ArrowLeft size={24} />
@@ -79,13 +80,20 @@ const Timeline: React.FC<TimelineProps> = ({
           </div>
           
           <div 
-            className="font-serif font-bold text-xl tracking-wider cursor-pointer select-none" 
+            className="font-serif font-bold text-xl tracking-wider cursor-pointer select-none absolute left-1/2 -translate-x-1/2" 
             onClick={() => window.scrollTo({top:0, behavior:'smooth'})}
           >
              {selectedTag ? `#${selectedTag}` : 'Path'}
           </div>
 
-          <div className="w-12 flex justify-end">
+          <div className="flex items-center gap-1 justify-end w-20">
+            <button 
+              onClick={onOpenTags}
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+              aria-label="All Tags"
+            >
+               <Hash size={20} />
+            </button>
             <button 
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-white/20 transition-colors"
@@ -220,11 +228,26 @@ const Timeline: React.FC<TimelineProps> = ({
             );
           })}
           
-          {loading && (
-            <div className="flex justify-center py-8">
-              <div className="w-6 h-6 border-2 border-path-red border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
+          {/* Loading / Load More / End State */}
+          <div className="py-12 flex flex-col items-center justify-center gap-4">
+             {loading ? (
+                <div className="w-8 h-8 border-2 border-path-red border-t-transparent rounded-full animate-spin"></div>
+             ) : hasMore ? (
+                <button 
+                  onClick={onLoadMore}
+                  className="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-path-cardDark border border-gray-200 dark:border-gray-700 rounded-full text-gray-500 dark:text-gray-400 text-sm font-bold shadow-sm hover:shadow-md hover:border-path-red dark:hover:border-path-red hover:text-path-red dark:hover:text-path-red transition-all active:scale-95"
+                >
+                   <ArrowDown size={16} className="group-hover:animate-bounce" />
+                   <span>Load More Moments</span>
+                </button>
+             ) : (
+               <div className="flex items-center gap-2 text-gray-300 dark:text-gray-600 opacity-60">
+                  <div className="w-1 h-1 rounded-full bg-current"></div>
+                  <span className="font-serif italic text-sm">End of path</span>
+                  <div className="w-1 h-1 rounded-full bg-current"></div>
+               </div>
+             )}
+          </div>
         </div>
       </div>
     </div>

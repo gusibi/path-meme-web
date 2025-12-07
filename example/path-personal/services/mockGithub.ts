@@ -15,6 +15,13 @@ const GUEST_USER: User = {
   is_owner: false,
 };
 
+const TAG_POOL = ['life', 'design', 'memory', 'travel', 'food', 'music', 'coding', 'minimalism', 'nature', 'work', 'coffee', 'art'];
+
+const getRandomTags = () => {
+  const shuffled = [...TAG_POOL].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, Math.floor(Math.random() * 3) + 1);
+};
+
 const generateMockPosts = (count: number, startId: number): Post[] => {
   return Array.from({ length: count }).map((_, i) => {
     const id = startId + i;
@@ -28,7 +35,7 @@ const generateMockPosts = (count: number, startId: number): Post[] => {
       body: `This is a simulated markdown content for post **#${id}**. \n\n It supports *markdown* syntax like lists:\n- Item 1\n- Item 2\n\n> "Path was known for its beautiful design."`,
       created_at: date.toISOString(),
       type,
-      tags: ['life', 'design', 'memory'],
+      tags: getRandomTags(),
       user: MOCK_USER,
       comments_count: Math.floor(Math.random() * 5),
     };
@@ -90,4 +97,17 @@ export const login = async (password: string): Promise<User | null> => {
 export const checkDiaryPassword = async (password: string): Promise<boolean> => {
   await new Promise(resolve => setTimeout(resolve, 500));
   return password === '1234'; // Simple diary password
+};
+
+export const getAllTags = async (): Promise<{ name: string; count: number }[]> => {
+  await new Promise(resolve => setTimeout(resolve, 400));
+  const counts: Record<string, number> = {};
+  postsCache.forEach(p => {
+    p.tags.forEach(t => {
+      counts[t] = (counts[t] || 0) + 1;
+    });
+  });
+  return Object.entries(counts)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
 };

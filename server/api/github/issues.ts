@@ -9,24 +9,25 @@ export async function getIssuesList(event: H3Event, repo_owner: string, repo_nam
     token = config.private.githubToken
   }
   const octokit = new Octokit({ auth: token })
-  var req_data = {
-    owner: repo_owner,
-    repo: repo_name,
-    // state: 'open', // 只获取开放的 issues
-    sort: 'created',
-    direction: 'desc',
-    per_page: perPage,// 限制返回的数量，你可以根据需要调整
-    page: page,
-    labels: labels
-  }
-  req_data.labels = labels
-  // console.log("req: ", req_data)
 
   try {
+    // 使用 Search API 获取精确的 total_count
+    let query = `repo:${repo_owner}/${repo_name} is:issue`
+    if (labels) {
+      // 支持多个 label，用逗号分隔
+      const labelList = labels.split(',').map(l => `label:"${l.trim()}"`).join(' ')
+      query += ` ${labelList}`
+    }
 
-    const { data: issues, headers } = await octokit.issues.listForRepo(req_data)
+    const { data: searchResult } = await octokit.search.issuesAndPullRequests({
+      q: query,
+      sort: 'created',
+      order: 'desc',
+      per_page: perPage,
+      page: page
+    })
 
-    const formattedIssues = issues.map(issue => ({
+    const formattedIssues = searchResult.items.map(issue => ({
       number: issue.number,
       title: issue.title,
       body: issue.body,
@@ -37,12 +38,15 @@ export async function getIssuesList(event: H3Event, repo_owner: string, repo_nam
       html_url: `/repo/${repo_owner}/${repo_name}/blog/${issue.number}`,
       github_url: issue.html_url,
       updated_at: issue.updated_at,
-      author: issue.user.login,
+      author: issue.user?.login,
       repo_url: `/repo/${repo_owner}/${repo_name}`,
       url: issue.html_url
     }))
 
-    return { issues: formattedIssues, headers }
+    return { 
+      issues: formattedIssues, 
+      totalCount: searchResult.total_count 
+    }
   } catch (error) {
     console.error('GitHub API error:', error)
     throw createError({ statusCode: 500, statusMessage: 'Failed to fetch issues from GitHub' })
@@ -74,7 +78,7 @@ export async function getRepoLabels(event: H3Event, repo_owner: string, repo_nam
 
       // Check if there's a next page
       const linkHeader = headers.link
-      hasNextPage = linkHeader && linkHeader.includes('rel="next"')
+      hasNextPage = !!(linkHeader && linkHeader.includes('rel="next"'))
       page++
     }
 

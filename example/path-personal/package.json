@@ -15,7 +15,8 @@
     "react-router-dom": "^7.10.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.556.0",
-    "react-markdown": "^10.1.0"
+    "react-markdown": "^10.1.0",
+    "html2canvas": "1.4.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

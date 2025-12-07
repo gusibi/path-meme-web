@@ -20,13 +20,36 @@
         <span class="sm:hidden">Path</span>
       </div>
 
-      <div class="w-12 flex justify-end items-center gap-2">
+      <div class="flex justify-end items-center gap-1">
         <!-- Desktop nav links -->
-        <div class="hidden md:flex items-center gap-4 mr-4">
-          <a href="/repo" class="text-white/80 hover:text-white text-sm font-medium transition-colors">Explore</a>
-          <a href="/api/rss.xml" class="text-white/80 hover:text-white text-sm font-medium transition-colors">RSS</a>
-          <a href="/about" class="text-white/80 hover:text-white text-sm font-medium transition-colors">About</a>
+        <div class="hidden md:flex items-center gap-1">
+          <a href="/repo" class="p-2 rounded-full hover:bg-white/20 transition-colors" aria-label="Explore" title="Explore">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+            </svg>
+          </a>
+          <a href="/api/rss.xml" class="p-2 rounded-full hover:bg-white/20 transition-colors" aria-label="RSS" title="RSS">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+            </svg>
+          </a>
+          <a href="/about" class="p-2 rounded-full hover:bg-white/20 transition-colors" aria-label="About" title="About">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </a>
         </div>
+        <!-- Tags button -->
+        <NuxtLink 
+          to="/tag"
+          class="p-2 rounded-full hover:bg-white/20 transition-colors"
+          aria-label="All Tags"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+          </svg>
+        </NuxtLink>
+        <!-- Dark mode toggle -->
         <button 
           @click="toggleNightMode"
           class="p-2 rounded-full hover:bg-white/20 transition-colors"
@@ -66,6 +89,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
               </svg>
               <span class="font-medium">Home</span>
+            </a>
+            <a href="/tag" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+              </svg>
+              <span class="font-medium">Tags</span>
             </a>
             <a href="/repo" class="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

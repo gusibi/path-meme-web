@@ -6,7 +6,7 @@
     <!-- Posts -->
     <div class="space-y-6">
       <article 
-        v-for="(post, index) in blogPosts" 
+        v-for="post in blogPosts" 
         :key="post.id"
         class="relative pl-0 sm:pl-12 group transition-transform hover:-translate-y-1 duration-200"
       >
@@ -78,25 +78,36 @@
         </div>
       </article>
 
-      <!-- Loading Indicator -->
-      <div v-if="loading" class="flex justify-center py-8">
-        <div class="w-6 h-6 border-2 border-path-red border-t-transparent rounded-full animate-spin"></div>
+      <!-- Loading / Load More / End State -->
+      <div class="py-12 flex flex-col items-center justify-center gap-4">
+        <!-- Loading -->
+        <div v-if="loading" class="w-8 h-8 border-2 border-path-red border-t-transparent rounded-full animate-spin"></div>
+        
+        <!-- Load More Button -->
+        <button 
+          v-else-if="hasMore"
+          @click="loadMore"
+          class="group flex items-center gap-2 px-6 py-3 bg-white dark:bg-path-cardDark border border-gray-200 dark:border-gray-700 rounded-full text-gray-500 dark:text-gray-400 text-sm font-bold shadow-sm hover:shadow-md hover:border-path-red dark:hover:border-path-red hover:text-path-red dark:hover:text-path-red transition-all active:scale-95"
+        >
+          <svg class="w-4 h-4 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
+          <span>加载更多</span>
+        </button>
+        
+        <!-- End of Content -->
+        <div v-else-if="blogPosts.length > 0" class="flex items-center gap-2 text-gray-300 dark:text-gray-600 opacity-60">
+          <div class="w-1 h-1 rounded-full bg-current"></div>
+          <span class="font-serif italic text-sm">End of path</span>
+          <div class="w-1 h-1 rounded-full bg-current"></div>
+        </div>
       </div>
     </div>
-
-    <!-- Pagination -->
-    <Pagination 
-      :current-page="currentPage" 
-      :total-items="totalItems" 
-      :per-page="perPage" 
-      @page-change="onPageChange" 
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import Pagination from '~/components/Pagination.vue'
+import { ref, computed } from 'vue'
 
 interface BlogPost {
   id: number
@@ -113,34 +124,59 @@ interface BlogPost {
 }
 
 const props = defineProps({
-  blogPosts: {
-    type: Array as PropType<BlogPost[]>,
-    required: true,
-    default: () => []
-  },
-  currentPage: {
-    type: Number,
-    required: true
-  },
-  totalItems: {
-    type: Number,
-    required: true
-  },
-  perPage: {
-    type: Number,
-    required: true
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  }
+  repoOwner: { type: String, required: true },
+  repoName: { type: String, required: true },
+  tag: { type: String, default: '' },
+  dataKey: { type: String, default: 'blogPosts' }
 })
 
-const emit = defineEmits(['pageChange'])
+const config = useRuntimeConfig()
+const perPage = parseInt(config.public.perPageSize as string) || 20
 
-const onPageChange = (page: number) => {
-  emit('pageChange', page)
+const blogPosts = ref<BlogPost[]>([])
+const currentPage = ref(1)
+const totalItems = ref(0)
+const loading = ref(false)
+
+const hasMore = computed(() => blogPosts.value.length < totalItems.value)
+
+const fetchBlogPosts = async (page = 1, append = false) => {
+  loading.value = true
+  try {
+    const params: Record<string, any> = { page, perPage }
+    if (props.tag) params.tag = props.tag
+
+    let fetchedData: any
+    if (!append) {
+      const { data } = await useAsyncData(`${props.dataKey}-${props.tag || 'all'}-${page}`, () =>
+        $fetch(`/api/repo/${props.repoOwner}/${props.repoName}/blog-posts`, { params })
+      )
+      fetchedData = data.value
+    } else {
+      fetchedData = await $fetch(`/api/repo/${props.repoOwner}/${props.repoName}/blog-posts`, { params })
+    }
+
+    if (append) {
+      blogPosts.value = [...blogPosts.value, ...(fetchedData?.blogPosts || [])]
+    } else {
+      blogPosts.value = fetchedData?.blogPosts || []
+    }
+    totalItems.value = fetchedData?.pagination?.totalItems || 0
+    currentPage.value = page
+  } finally {
+    loading.value = false
+  }
 }
+
+const loadMore = async () => {
+  await fetchBlogPosts(currentPage.value + 1, true)
+}
+
+// 初始加载
+await fetchBlogPosts()
+
+// 暴露数据给父组件
+defineExpose({ blogPosts, totalItems, loading })
 
 const formatDateShort = (dateString: string) => {
   const date = new Date(dateString)
@@ -187,6 +223,7 @@ const isMemePost = (labels: Array<{ name: string }>): boolean => {
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

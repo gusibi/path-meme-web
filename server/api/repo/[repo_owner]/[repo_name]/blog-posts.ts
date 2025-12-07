@@ -57,9 +57,8 @@ export default defineEventHandler(async (event) => {
             }
         }
 
-        const { issues, headers } = await getIssuesList(event, repo_owner, repo_name, tag, perPage, page)
-        const totalItems = getTotalPages(headers, page) * perPage
-        // console.log("totalItems: ", totalItems, page, perPage)
+        const { issues, totalCount } = await getIssuesList(event, repo_owner, repo_name, tag, perPage, page)
+        // console.log("totalCount: ", totalCount, page, perPage)
         if (repoData) {
             repoData = {
                 ...repoData,
@@ -71,7 +70,7 @@ export default defineEventHandler(async (event) => {
             blogPosts: issues,
             pagination: {
                 currentPage: page,
-                totalItems: totalItems,
+                totalItems: totalCount,
                 perPage: perPage
             }
 
@@ -82,23 +81,3 @@ export default defineEventHandler(async (event) => {
     }
 })
 
-function getTotalPages(headers: Record<string, any>, currentPage: number): number {
-    if (!headers['link']) {
-        return 1;
-    }
-    // console.log(headers['link'])
-
-    let totalPage = 1
-    const links = headers['link'].split(',');
-    for (const link of links) {
-        const match = link.match(/&page=(\d+)>; rel="last"/);
-        if (match) {
-            totalPage = parseInt(match[1], 10);
-        }
-    }
-
-    if (currentPage > totalPage) {
-        totalPage = currentPage
-    }
-    return totalPage;
-}

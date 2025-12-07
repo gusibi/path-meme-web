@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Post, Comment, PostType } from '../types';
 import { checkDiaryPassword, getComments, addComment } from '../services/mockGithub';
-import { ArrowLeft, Send, Lock, Calendar } from 'lucide-react';
+import { ArrowLeft, Send, Lock, Calendar, Share2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { format } from 'date-fns';
+import ShareModal from './ShareModal';
 
 interface PostDetailProps {
   post: Post;
@@ -19,6 +20,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, user, onClose, onTagClick
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loadingComments, setLoadingComments] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
     if (!isLocked) {
@@ -83,17 +85,27 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, user, onClose, onTagClick
   return (
     <div className="fixed inset-0 z-50 bg-white dark:bg-path-cardDark flex flex-col overflow-hidden animate-bounce-soft">
       {/* Nav */}
-      <div className="h-16 border-b border-gray-100 dark:border-gray-800 flex items-center px-4 sticky top-0 bg-white/90 dark:bg-path-cardDark/90 backdrop-blur-md z-10">
-        <button onClick={onClose} className="p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
-          <ArrowLeft />
-        </button>
-        <div className="ml-4 flex items-center gap-3">
-           <img src={post.user.avatar_url} className="w-8 h-8 rounded-full" />
-           <div className="flex flex-col">
-             <span className="text-sm font-bold text-gray-800 dark:text-gray-100">{post.user.username}</span>
-             <span className="text-[10px] text-gray-400 dark:text-gray-500">{format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
-           </div>
+      <div className="h-16 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-4 sticky top-0 bg-white/90 dark:bg-path-cardDark/90 backdrop-blur-md z-10">
+        <div className="flex items-center">
+            <button onClick={onClose} className="p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
+            <ArrowLeft />
+            </button>
+            <div className="ml-4 flex items-center gap-3">
+            <img src={post.user.avatar_url} className="w-8 h-8 rounded-full" />
+            <div className="flex flex-col">
+                <span className="text-sm font-bold text-gray-800 dark:text-gray-100">{post.user.username}</span>
+                <span className="text-[10px] text-gray-400 dark:text-gray-500">{format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
+            </div>
+            </div>
         </div>
+        
+        {/* Share Button */}
+        <button 
+            onClick={() => setShowShare(true)}
+            className="p-2 text-path-red hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+        >
+            <Share2 size={22} />
+        </button>
       </div>
 
       {/* Body */}
@@ -169,6 +181,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, user, onClose, onTagClick
           </div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      {showShare && (
+          <ShareModal 
+            post={post} 
+            onClose={() => setShowShare(false)} 
+          />
+      )}
     </div>
   );
 };

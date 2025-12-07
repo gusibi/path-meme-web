@@ -6,6 +6,7 @@ import Timeline from './components/Timeline';
 import PathFab from './components/PathFab';
 import Editor from './components/Editor';
 import PostDetail from './components/PostDetail';
+import TagList from './components/TagList';
 
 const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -16,6 +17,7 @@ const App = () => {
   // App State
   const [darkMode, setDarkMode] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [showTags, setShowTags] = useState(false);
 
   // Editor State
   const [editorType, setEditorType] = useState<PostType | null>(null);
@@ -79,6 +81,7 @@ const App = () => {
 
   const handleTagClick = (tag: string) => {
     setSelectedTag(tag);
+    setShowTags(false);
     setSelectedPost(null); // Close detail view if open
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -105,10 +108,19 @@ const App = () => {
           selectedTag={selectedTag}
           onClearTag={() => setSelectedTag(null)}
           onTagClick={handleTagClick}
+          onOpenTags={() => setShowTags(true)}
         />
 
         {/* Floating Action Button */}
         <PathFab onOpenEditor={setEditorType} />
+
+        {/* Tag List Modal */}
+        {showTags && (
+          <TagList 
+            onClose={() => setShowTags(false)} 
+            onSelectTag={handleTagClick} 
+          />
+        )}
 
         {/* Editor Modal */}
         {editorType && (
