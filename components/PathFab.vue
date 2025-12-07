@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-8 right-6 z-40">
+  <div v-if="canPublish" class="fixed bottom-8 right-6 z-40">
     <!-- Menu Items - 圆形扩散布局 -->
     <div class="absolute bottom-0 right-0 w-14 h-14">
       <!-- Write Article (上方 270度) -->
@@ -64,13 +64,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useSupabaseUser } from '#imports'
 
 type PostType = 'article' | 'text' | 'diary'
 
+const user = useSupabaseUser()
 const isOpen = ref(false)
 const editorVisible = ref(false)
 const editorType = ref<PostType>('text')
+const isAuthorizedPublisher = ref(false)
+
+// 检测是否已登录（参考 CommentBox.vue）
+const isLoggedIn = computed(() => {
+  const githubToken = useCookie('github_token').value
+  const githubUser = useCookie('github_username').value
+  return !!githubToken && !!githubUser && !!user.value
+})
+
+// 检查用户是否有发布权限
+const checkPublishPermission = async () => {
+  if (!isLoggedIn.value) {
+    isAuthorizedPublisher.value = false
+    return
+  }
+  try {
+    const { data } = await useFetch('/api/auth/check-publisher')
+    isAuthorizedPublisher.value = data.value?.canPublish ?? false
+  } catch (error) {
+    console.error('Failed to check publish permission:', error)
+    isAuthorizedPublisher.value = false
+  }
+}
+
+// 监听登录状态变化
+watch(isLoggedIn, () => {
+  checkPublishPermission()
+}, { immediate: true })
+
+// 最终是否可以发布：已登录 + 是授权用户
+const canPublish = computed(() => isLoggedIn.value && isAuthorizedPublisher.value)
 
 // 扩散半径
 const radius = 80

@@ -88,6 +88,11 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    // 私有配置（仅服务端可访问）
+    allowedPublisherId: process.env.ALLOWED_PUBLISHER_ID,
+    private: {
+      githubToken: process.env.GITHUB_TOKEN,
+    },
     public: {
       apiBaseUrl:
         process.env.API_BASE_URL || "https://path-memo-api.gusibi.site",
@@ -98,9 +103,6 @@ export default defineNuxtConfig({
       siteDescription: "古思乱讲 - 一个关于技术、生活和思考的博客",
       siteUrl: process.env.SITE_URL || "https://momo.gusibi.site",
       twitterHandle: "@yourtwitterhandle",
-    },
-    private: {
-      githubToken: process.env.GITHUB_TOKEN,
     },
   },
   gtag: {

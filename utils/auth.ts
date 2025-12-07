@@ -2,29 +2,15 @@ import { H3Event } from 'h3'
 import { serverSupabaseClient, serverSupabaseUser } from '#supabase/server'
 
 export async function checkAuth(event: H3Event) {
-
-  try {
-    const user = await serverSupabaseUser(event)
-    if (user) {
-      return { isAuthenticated: true, user }
-    }
-  } catch (error) {
-    console.error('Error checking authentication:', error)
-  }
-
-  // 如果 serverSupabaseUser 失败，尝试使用 cookie
+  // 先尝试使用 supabase client 获取 session，避免 serverSupabaseUser 抛出错误
   const supabase = await serverSupabaseClient(event)
   const { data: { session } } = await supabase.auth.getSession()
 
-  const checkLoginStatus = () => {
-    const githubToken = useCookie('github_token').value
-    const githubUser = useCookie('github_username').value
-    return !!githubToken && !!githubUser
-  }
-  if (session && checkLoginStatus()) {
+  if (session?.user) {
     return { isAuthenticated: true, user: session.user }
   }
 
+  // 如果没有 session，静默返回未认证状态
   return { isAuthenticated: false, user: null }
 }
 
