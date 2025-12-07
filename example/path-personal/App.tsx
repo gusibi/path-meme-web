@@ -7,6 +7,7 @@ import PathFab from './components/PathFab';
 import Editor from './components/Editor';
 import PostDetail from './components/PostDetail';
 import TagList from './components/TagList';
+import LandingPage from './components/LandingPage';
 
 const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -18,6 +19,7 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [showTags, setShowTags] = useState(false);
+  const [showLanding, setShowLanding] = useState(false);
 
   // Editor State
   const [editorType, setEditorType] = useState<PostType | null>(null);
@@ -83,6 +85,7 @@ const App = () => {
     setSelectedTag(tag);
     setShowTags(false);
     setSelectedPost(null); // Close detail view if open
+    setShowLanding(false); // Ensure we are on timeline
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -90,6 +93,14 @@ const App = () => {
     if (!selectedTag) return posts;
     return posts.filter(p => p.tags.includes(selectedTag));
   }, [posts, selectedTag]);
+
+  if (showLanding) {
+    return (
+      <div className={`${darkMode ? 'dark' : ''}`}>
+        <LandingPage onBack={() => setShowLanding(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className={`${darkMode ? 'dark' : ''}`}>
@@ -109,6 +120,7 @@ const App = () => {
           onClearTag={() => setSelectedTag(null)}
           onTagClick={handleTagClick}
           onOpenTags={() => setShowTags(true)}
+          onShowAbout={() => setShowLanding(true)}
         />
 
         {/* Floating Action Button */}

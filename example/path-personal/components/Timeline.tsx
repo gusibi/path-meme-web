@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { Post, PostType } from '../types';
-import { Clock, MessageCircle, Lock, MoreHorizontal, Sun, Moon, Hash, ArrowLeft, ArrowDown } from 'lucide-react';
+import { Clock, MessageCircle, Lock, MoreHorizontal, Sun, Moon, Hash, ArrowLeft, ArrowDown, Github, Info } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface TimelineProps {
@@ -16,11 +16,12 @@ interface TimelineProps {
   onClearTag: () => void;
   onTagClick: (tag: string) => void;
   onOpenTags: () => void;
+  onShowAbout: () => void;
 }
 
 const Timeline: React.FC<TimelineProps> = ({ 
   posts, onLoadMore, onRefresh, onPostClick, loading, hasMore,
-  isDarkMode, toggleTheme, selectedTag, onClearTag, onTagClick, onOpenTags
+  isDarkMode, toggleTheme, selectedTag, onClearTag, onTagClick, onOpenTags, onShowAbout
 }) => {
   const observer = useRef<IntersectionObserver | null>(null);
   const lastPostRef = useCallback((node: HTMLDivElement) => {
@@ -115,7 +116,7 @@ const Timeline: React.FC<TimelineProps> = ({
       )}
 
       {/* Main Content Container */}
-      <div className="max-w-xl mx-auto pb-32 pt-28 px-4 relative">
+      <div className="max-w-xl mx-auto pt-28 px-4 relative">
         
         {/* Profile/Hero Section (Clean Design) */}
         <div className="relative text-center mb-12">
@@ -142,7 +143,7 @@ const Timeline: React.FC<TimelineProps> = ({
         </div>
 
         {/* The Vertical Line */}
-        <div className="absolute left-8 top-64 bottom-0 w-0.5 bg-path-line dark:bg-path-lineDark -z-10 hidden sm:block"></div>
+        <div className="absolute left-8 top-64 bottom-10 w-0.5 bg-path-line dark:bg-path-lineDark -z-10 hidden sm:block"></div>
 
         {/* Posts */}
         <div className="space-y-8">
@@ -229,7 +230,7 @@ const Timeline: React.FC<TimelineProps> = ({
           })}
           
           {/* Loading / Load More / End State */}
-          <div className="py-12 flex flex-col items-center justify-center gap-4">
+          <div className="pt-12 pb-4 flex flex-col items-center justify-center gap-4">
              {loading ? (
                 <div className="w-8 h-8 border-2 border-path-red border-t-transparent rounded-full animate-spin"></div>
              ) : hasMore ? (
@@ -248,6 +249,30 @@ const Timeline: React.FC<TimelineProps> = ({
                </div>
              )}
           </div>
+
+          {/* Site Footer */}
+          <footer className="border-t border-gray-200 dark:border-gray-800 pt-8 pb-12 mt-8">
+             <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-6 text-sm font-medium text-gray-500 dark:text-gray-400">
+                   <button 
+                     onClick={onShowAbout}
+                     className="flex items-center gap-1.5 hover:text-path-red transition-colors"
+                   >
+                     <Info size={16} /> About
+                   </button>
+                   <a 
+                     href="https://github.com/your-username/path-personal" 
+                     target="_blank"
+                     className="flex items-center gap-1.5 hover:text-path-red transition-colors"
+                   >
+                     <Github size={16} /> GitHub Project
+                   </a>
+                </div>
+                <p className="text-xs text-gray-400 dark:text-gray-600">
+                   © {new Date().getFullYear()} Path Personal.
+                </p>
+             </div>
+          </footer>
         </div>
       </div>
     </div>

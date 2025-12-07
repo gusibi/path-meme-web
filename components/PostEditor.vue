@@ -437,28 +437,56 @@ const triggerImageUpload = () => {
   fileInputRef.value?.click()
 }
 
-const handleImageUpload = (e: Event) => {
+const handleImageUpload = async (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
   if (!file) return
 
   isUploading.value = true
-  const reader = new FileReader()
-  reader.onloadend = () => {
-    const base64 = reader.result as string
-    const imgMarkdown = `\n![${file.name}](${base64})\n`
-    const textarea = textareaRef.value
-    if (textarea) {
-      const start = textarea.selectionStart
-      const end = textarea.selectionEnd
-      const text = textarea.value
-      body.value = text.substring(0, start) + imgMarkdown + text.substring(end)
-    } else {
-      body.value += imgMarkdown
+  
+  try {
+    // Read file as base64
+    const base64Content = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const result = reader.result as string
+        // Remove data URL prefix (e.g., "data:image/png;base64,")
+        const base64 = result.split(',')[1]
+        resolve(base64)
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+
+    // Upload to GitHub
+    const response = await $fetch('/api/github/upload-image', {
+      method: 'POST',
+      body: {
+        filename: file.name,
+        content: base64Content
+      }
+    })
+
+    if (response.success && response.url) {
+      const imgMarkdown = `\n![${file.name}](${response.url})\n`
+      const textarea = textareaRef.value
+      if (textarea) {
+        const start = textarea.selectionStart
+        const end = textarea.selectionEnd
+        const text = textarea.value
+        body.value = text.substring(0, start) + imgMarkdown + text.substring(end)
+      } else {
+        body.value += imgMarkdown
+      }
     }
+  } catch (error: any) {
+    console.error('Failed to upload image:', error)
+    emit('error', error.data?.statusMessage || 'Failed to upload image')
+  } finally {
     isUploading.value = false
+    // Reset file input
+    if (target) target.value = ''
   }
-  reader.readAsDataURL(file)
 }
 
 // Reset form when visibility changes (keep only one watch for isVisible)

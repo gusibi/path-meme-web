@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-bounce-soft">
+  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-bounce-soft">
     <div class="w-full max-w-sm bg-white dark:bg-path-cardDark rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
       
       <!-- Header -->

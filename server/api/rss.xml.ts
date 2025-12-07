@@ -1,5 +1,17 @@
 import { Feed } from 'feed'
 import { defineEventHandler, useRuntimeConfig, setHeader } from '#imports'
+import { getIssuesList } from './github/issues'
+
+interface Post {
+    number: number
+    title: string
+    body?: string
+    description?: string
+    content?: string
+    author?: string
+    created_at: string
+    cover_image?: string
+}
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
@@ -8,7 +20,7 @@ export default defineEventHandler(async (event) => {
         description: "Your blog description",
         id: config.public.siteUrl,
         link: config.public.siteUrl,
-        language: "zh-CN", // 根据您的博客语言进行调整
+        language: "zh-CN",
         image: `${config.public.siteUrl}/favicon.ico`,
         favicon: `${config.public.siteUrl}/favicon.ico`,
         copyright: `All rights reserved ${new Date().getFullYear()}, 古思乱讲`,
@@ -16,34 +28,27 @@ export default defineEventHandler(async (event) => {
             rss2: `${config.public.siteUrl}/api/rss.xml`,
         },
         author: {
-            name: "Your Name",
+            name: "古思乱讲",
             email: "your-email@example.com",
             link: config.public.siteUrl
         }
     })
 
-    // 从你的 API 获取博客文章
-    const response = await fetch(`${config.public.apiBaseUrl}/api/blog-posts`)
-    if (!response.ok) {
-        throw createError({
-            statusCode: response.status,
-            statusMessage: response.statusText,
-            message: `Failed to fetch blog posts`
-        })
-    }
+    // 使用内部 API 获取博客文章
+    const repoOwner = config.public.repoOwner
+    const repoName = config.public.repoName
+    const { issues: posts } = await getIssuesList(event, repoOwner, repoName, '', 20, 1)
 
-    const posts = await response.json()
-
-    posts.forEach((post) => {
+    posts.forEach((post: Post) => {
         feed.addItem({
             title: post.title,
             id: `${config.public.siteUrl}/blog/${post.number}`,
             link: `${config.public.siteUrl}/blog/${post.number}`,
-            description: post.description,
-            content: post.content,
+            description: post.body?.slice(0, 200) || '',
+            content: post.body || '',
             author: [
                 {
-                    name: post.author,
+                    name: post.author || '古思乱讲',
                     email: "author@example.com",
                     link: config.public.siteUrl
                 }

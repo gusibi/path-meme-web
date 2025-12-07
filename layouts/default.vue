@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-path-bg dark:bg-path-dark text-gray-800 dark:text-gray-100 transition-colors duration-300">
     <!-- Fixed Red Glass Header -->
-    <header class="fixed top-0 left-0 right-0 h-14 sm:h-16 bg-path-red/90 dark:bg-path-red/80 backdrop-blur-md z-50 shadow-sm border-b border-white/10 px-4 flex items-center justify-between text-white transition-all">
+    <header class="fixed top-0 left-0 right-0 h-12 sm:h-14 bg-path-red/90 dark:bg-path-red/80 backdrop-blur-md z-50 shadow-sm border-b border-white/10 px-4 flex items-center justify-between text-white transition-all">
       <div class="flex items-center w-12">
         <!-- Mobile menu button -->
         <button class="md:hidden p-2 -ml-2 hover:bg-white/20 rounded-full transition-colors" @click="toggleMobileMenu">
@@ -15,12 +15,12 @@
         class="font-serif font-bold text-xl tracking-wider cursor-pointer select-none flex items-center gap-2" 
         @click="navigateToHome"
       >
-        <img class="w-8 h-8 rounded-full border-2 border-white/30" src="https://avatars.githubusercontent.com/u/1282277?v=4" alt="Avatar" />
-        <span class="hidden sm:inline">古思乱讲</span>
-        <span class="sm:hidden">Path</span>
+        <!-- <img class="w-8 h-8 rounded-full border-2 border-white/30" src="https://avatars.githubusercontent.com/u/1282277?v=4" alt="Avatar" />
+        <span class="hidden sm:inline">古思乱讲</span> -->
+        <span>Path Meme</span>
       </div>
 
-      <div class="flex justify-end items-center gap-1">
+      <div class="flex justify-end items-center gap-1 w-12 md:w-auto">
         <!-- Desktop nav links -->
         <div class="hidden md:flex items-center gap-1">
           <a href="/repo" class="p-2 rounded-full hover:bg-white/20 transition-colors" aria-label="Explore" title="Explore">
@@ -127,18 +127,34 @@
     </Transition>
 
     <!-- Main Content -->
-    <main class="pt-14 sm:pt-16 pb-32">
+    <main class="pt-12 sm:pt-14 pb-32">
       <slot />
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-path-cardDark border-t border-gray-100 dark:border-gray-800 py-8">
-      <div class="max-w-content mx-auto px-4 text-center">
-        <div class="mb-4 flex justify-center gap-6">
-          <a href="https://momo.gusibi.site" class="text-gray-500 dark:text-gray-400 hover:text-path-red dark:hover:text-path-red text-sm transition-colors">本站地址</a>
-          <a href="/sitemap.xml" class="text-gray-500 dark:text-gray-400 hover:text-path-red dark:hover:text-path-red text-sm transition-colors">SiteMap</a>
+    <footer class="border-t border-gray-200 dark:border-gray-800 pt-8 pb-12 mt-8 bg-white dark:bg-path-cardDark">
+      <div class="flex flex-col items-center gap-4">
+        <div class="flex items-center gap-6 text-sm font-medium text-gray-500 dark:text-gray-400">
+          <NuxtLink to="/about" class="flex items-center gap-1.5 hover:text-path-red transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            About
+          </NuxtLink>
+          <NuxtLink to="/landing" class="flex items-center gap-1.5 hover:text-path-red transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Landing
+          </NuxtLink>
+          <a href="https://github.com/gusibi/path-meme-web" target="_blank" class="flex items-center gap-1.5 hover:text-path-red transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub Project
+          </a>
         </div>
-        <p class="text-xs text-gray-400 dark:text-gray-500">Design by <a href="https://github.com/gusibi/path-meme-web" class="hover:text-path-red transition-colors">gusibi@path-meme</a></p>
+        <p class="text-xs text-gray-400 dark:text-gray-600">© {{ new Date().getFullYear() }} Path Meme.</p>
       </div>
     </footer>
 
