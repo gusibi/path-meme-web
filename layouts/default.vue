@@ -62,6 +62,42 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
           </svg>
         </button>
+        <!-- User avatar / Login button (desktop only) -->
+        <div v-if="user" class="relative group hidden md:block">
+          <button class="p-1 rounded-full hover:bg-white/20 transition-colors">
+            <img 
+              :src="user.user_metadata?.avatar_url || 'https://avatars.githubusercontent.com/u/0'" 
+              :alt="user.user_metadata?.user_name || 'User'"
+              class="w-7 h-7 rounded-full border-2 border-white/30"
+            />
+          </button>
+          <!-- Dropdown menu -->
+          <div class="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-path-cardDark rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+            <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-700">
+              <p class="text-sm font-medium text-gray-800 dark:text-white truncate">{{ user.user_metadata?.user_name || 'User' }}</p>
+            </div>
+            <button 
+              @click="handleLogout"
+              class="w-full px-3 py-2 text-left text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-b-lg transition-colors flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+              退出登录
+            </button>
+          </div>
+        </div>
+        <NuxtLink 
+          v-else
+          to="/login"
+          class="hidden md:block p-2 rounded-full hover:bg-white/20 transition-colors"
+          aria-label="Login"
+          title="登录"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+          </svg>
+        </NuxtLink>
       </div>
     </header>
 
@@ -115,7 +151,44 @@
               <span class="font-medium">About</span>
             </a>
           </nav>
-          <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <!-- User section -->
+          <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div v-if="user" class="space-y-3">
+              <div class="flex items-center gap-3 px-4">
+                <img 
+                  :src="user.user_metadata?.avatar_url || 'https://avatars.githubusercontent.com/u/0'" 
+                  :alt="user.user_metadata?.user_name || 'User'"
+                  class="w-10 h-10 rounded-full"
+                />
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium text-gray-800 dark:text-white truncate">{{ user.user_metadata?.user_name || 'User' }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ user.email }}</p>
+                </div>
+              </div>
+              <button 
+                @click="handleLogout"
+                class="flex items-center gap-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                <span class="font-medium">退出登录</span>
+              </button>
+            </div>
+            <NuxtLink 
+              v-else
+              to="/login"
+              class="flex items-center gap-3 px-4 py-3 text-path-red hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+              @click="mobileMenuOpen = false"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+              </svg>
+              <span class="font-medium">登录</span>
+            </NuxtLink>
+          </div>
+
+          <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <p class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">友情链接</p>
             <div class="space-y-2">
               <a href="https://blog.gusibi.site" class="block px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-path-red dark:hover:text-path-red transition-colors">古思乱想</a>
@@ -176,9 +249,23 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from '#imports'
 import { useRouter } from 'vue-router'
+import { useSupabaseUser, useSupabaseClient } from '#imports'
 
 const router = useRouter()
 const config = useRuntimeConfig()
+const user = useSupabaseUser()
+const supabase = useSupabaseClient()
+
+const handleLogout = async () => {
+  try {
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+    mobileMenuOpen.value = false
+    router.push('/')
+  } catch (error) {
+    console.error('Logout error:', error)
+  }
+}
 
 const isDarkMode = ref(false)
 const mobileMenuOpen = ref(false)
@@ -241,7 +328,8 @@ useHead({
     { rel: 'canonical', href: config.public.siteUrl },
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap' }
+    // 使用 preload + swap 避免字体阻塞渲染
+    { rel: 'preload', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap', as: 'style', onload: "this.onload=null;this.rel='stylesheet'" }
   ],
 })
 </script>
