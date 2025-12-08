@@ -1,5 +1,7 @@
 <template>
   <div>
+    <!-- PWA 更新提示 -->
+    <PwaUpdatePrompt />
     <!-- 离线状态指示器 -->
     <OfflineIndicator />
     <!-- <NuxtRouteAnnouncer />

@@ -97,12 +97,32 @@ export default defineNuxtConfig({
     workbox: {
       navigateFallback: null, // 禁用 navigateFallback，让 Cloudflare 处理路由
       globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
-      // 排除 API 路由和动态路由
+      // 排除 API 路由
       navigateFallbackDenylist: [/^\/api\//],
+      // 跳过等待，立即激活新 Service Worker
+      skipWaiting: true,
+      clientsClaim: true,
+      // 清理旧缓存
+      cleanupOutdatedCaches: true,
       runtimeCaching: [
         {
+          // JS/CSS 文件使用 NetworkFirst，确保获取最新版本
+          urlPattern: /\.(js|css)$/i,
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "static-resources",
+            expiration: {
+              maxEntries: 100,
+              maxAgeSeconds: 60 * 60 * 24, // 1 day
+            },
+            cacheableResponse: {
+              statuses: [0, 200],
+            },
+          },
+        },
+        {
           // 缓存页面导航请求
-          urlPattern: ({ request }) => request.mode === 'navigate',
+          urlPattern: ({ request }) => request.mode === "navigate",
           handler: "NetworkFirst",
           options: {
             cacheName: "pages-cache",
@@ -113,6 +133,7 @@ export default defineNuxtConfig({
             cacheableResponse: {
               statuses: [0, 200],
             },
+            networkTimeoutSeconds: 3, // 3秒超时后使用缓存
           },
         },
         {
