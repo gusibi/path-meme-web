@@ -1,10 +1,14 @@
 <template>
   <div>
+    <!-- 离线状态指示器 -->
+    <OfflineIndicator />
     <!-- <NuxtRouteAnnouncer />
     <NuxtWelcome /> -->
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <!-- PWA 安装提示 -->
+    <PwaInstallPrompt />
   </div>
 </template>
 <script setup>

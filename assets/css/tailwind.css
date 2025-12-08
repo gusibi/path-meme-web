@@ -147,4 +147,89 @@ body {
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* PWA standalone mode optimizations */
+@media (display-mode: standalone) {
+  body {
+    /* 防止过度滚动 */
+    overscroll-behavior: none;
+    /* 禁用文本选择（可选，根据需要） */
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* 允许在内容区域选择文本 */
+  .prose,
+  article,
+  .selectable {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  
+  /* 隐藏滚动条以获得更原生的体验 */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* iOS 状态栏适配 */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .ios-status-bar-padding {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* 触摸优化 */
+.touch-action-pan-y {
+  touch-action: pan-y;
+}
+
+.touch-action-none {
+  touch-action: none;
+}
+
+/* 防止双击缩放 */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* 平滑滚动 */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 离线状态指示器 */
+.offline-indicator {
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 0;
+  right: 0;
+  background-color: #f59e0b;
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  z-index: 9999;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+.offline-indicator.show {
+  transform: translateY(0);
 }

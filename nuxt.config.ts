@@ -7,11 +7,15 @@ export default defineNuxtConfig({
   app: {
     head: {
       charset: "utf-8",
-      viewport: "width=device-width, initial-scale=1",
+      viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
       titleTemplate: "%s - 古思乱讲",
       meta: [
         { charset: "utf-8" },
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+        { name: "apple-mobile-web-app-title", content: "古思乱讲" },
+        { name: "theme-color", content: "#EE3524" },
         { name: "format-detection", content: "telephone=no" },
         {
           name: "description",
@@ -37,7 +41,11 @@ export default defineNuxtConfig({
           content: "mK8IcUVJNhs8X6Fwy-cJCB9AEIqxFbLOsKvynUoqa3Y",
         },
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+        { rel: "mask-icon", href: "/pwa-512x512.svg", color: "#3b82f6" },
+      ],
     },
   },
   ssr: false,
@@ -51,7 +59,83 @@ export default defineNuxtConfig({
     "@nuxtjs/supabase",
     "nuxt-gtag",
     "nuxt-clarity-analytics",
+    "@vite-pwa/nuxt",
   ],
+
+  // PWA 配置
+  pwa: {
+    registerType: "autoUpdate",
+    manifest: {
+      name: "Path Meme",
+      short_name: "Path Meme",
+      description: "Path Meme - 一个关于技术、生活和思考的博客",
+      theme_color: "#EE3524",
+      background_color: "#FBF8F5",
+      display: "standalone",
+      orientation: "portrait",
+      scope: "/",
+      start_url: "/",
+      icons: [
+        {
+          src: "/pwa-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          src: "/pwa-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+        },
+        {
+          src: "/pwa-maskable-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "maskable",
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: "/",
+      globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/api\.github\.com\/.*/i,
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "github-api-cache",
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 60 * 60, // 1 hour
+            },
+            cacheableResponse: {
+              statuses: [0, 200],
+            },
+          },
+        },
+        {
+          urlPattern: /^https:\/\/.*\.githubusercontent\.com\/.*/i,
+          handler: "CacheFirst",
+          options: {
+            cacheName: "github-images-cache",
+            expiration: {
+              maxEntries: 100,
+              maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+            },
+            cacheableResponse: {
+              statuses: [0, 200],
+            },
+          },
+        },
+      ],
+    },
+    client: {
+      installPrompt: true,
+    },
+    devOptions: {
+      enabled: true,
+      type: "module",
+    },
+  },
 
   // configuration options
   socialShare: {
