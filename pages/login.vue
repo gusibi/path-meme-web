@@ -16,7 +16,8 @@ const handleGitHubLogin = async () => {
     const { data, error: loginError } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/auth/confirm`
+        redirectTo: `${window.location.origin}/auth/confirm`,
+        scopes: 'repo' // 请求仓库的完整读写权限（包括私有仓库）
       }
     })
     if (loginError) throw loginError

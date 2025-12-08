@@ -91,7 +91,7 @@ const login = async () => {
     provider: 'github',
     options: {
       redirectTo: `${window.location.origin}/auth/confirm`,
-      scopes: "public_repo"
+      scopes: 'repo'
     }
   })
   if (error) {
