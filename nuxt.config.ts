@@ -95,9 +95,26 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      navigateFallback: "/",
+      navigateFallback: null, // 禁用 navigateFallback，让 Cloudflare 处理路由
       globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
+      // 排除 API 路由和动态路由
+      navigateFallbackDenylist: [/^\/api\//],
       runtimeCaching: [
+        {
+          // 缓存页面导航请求
+          urlPattern: ({ request }) => request.mode === 'navigate',
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "pages-cache",
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 60 * 60, // 1 hour
+            },
+            cacheableResponse: {
+              statuses: [0, 200],
+            },
+          },
+        },
         {
           urlPattern: /^https:\/\/api\.github\.com\/.*/i,
           handler: "NetworkFirst",
@@ -132,7 +149,7 @@ export default defineNuxtConfig({
       installPrompt: true,
     },
     devOptions: {
-      enabled: true,
+      enabled: false, // 生产环境关闭
       type: "module",
     },
   },
